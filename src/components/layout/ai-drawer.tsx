@@ -28,7 +28,12 @@ export function AIDrawer({ isOpen, onClose }: AIDrawerProps) {
   ])
   const [input, setInput] = React.useState("")
   const [isTyping, setIsTyping] = React.useState(false)
+  const [mounted, setMounted] = React.useState(false)
   const messagesEndRef = React.useRef<HTMLDivElement>(null)
+
+  React.useEffect(() => {
+    setMounted(true)
+  }, [])
 
   React.useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -149,8 +154,8 @@ export function AIDrawer({ isOpen, onClose }: AIDrawerProps) {
                 >
                   <p className="whitespace-pre-line">{msg.content}</p>
                 </div>
-                <span className="text-[9px] text-muted-foreground self-start px-1">
-                  {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                <span className="text-[9px] text-muted-foreground self-start px-1" suppressHydrationWarning>
+                  {mounted ? msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ""}
                 </span>
               </div>
             </div>
