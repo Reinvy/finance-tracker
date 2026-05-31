@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
 import { signIn } from "next-auth/react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -11,7 +10,6 @@ import { Label } from "@/components/ui/label"
 import { toast } from "sonner"
 
 export default function LoginPage() {
-  const router = useRouter()
   const [loading, setLoading] = useState(false)
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
