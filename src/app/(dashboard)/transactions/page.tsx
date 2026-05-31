@@ -15,15 +15,11 @@ import {
   X,
   TrendingDown,
   TrendingUp,
+  Sparkles,
+  SlidersHorizontal,
 } from "lucide-react"
 import { toast } from "sonner"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card"
+import { GlowCard } from "@/components/ui/glow-card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -42,7 +38,6 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-  DialogTrigger,
   DialogClose,
 } from "@/components/ui/dialog"
 import {
@@ -209,8 +204,8 @@ export default function TransactionsPage() {
       date: new Date(tx.date).toISOString().split("T")[0],
       walletId: tx.wallet.id,
       categoryId: tx.category.id,
-      isRecurring: false,
-      recurringInterval: "MONTHLY",
+      isRecurring: (tx as any).isRecurring || false,
+      recurringInterval: (tx as any).recurringInterval || "MONTHLY",
     })
     setDialogOpen(true)
   }
@@ -237,7 +232,7 @@ export default function TransactionsPage() {
       const res = await fetch("/api/transactions", {
         method: editingId ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
+        body: JSON.stringify(editingId ? { ...body, id: editingId } : body),
       })
 
       if (!res.ok) {
@@ -269,8 +264,6 @@ export default function TransactionsPage() {
   }
 
   const hasFilters = search || typeFilter || categoryFilter || walletFilter || dateFrom || dateTo
-
-  // Determine selected category type for filtering
   const expenseCategories = categories.filter((c) => c.type === "EXPENSE")
   const incomeCategories = categories.filter((c) => c.type === "INCOME")
   const allFilteredCategories = typeFilter
@@ -278,222 +271,220 @@ export default function TransactionsPage() {
     : categories
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-3 duration-300">
+      
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">Transactions</h1>
-          <p className="text-sm text-muted-foreground">Manage your income and expenses</p>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">Operations Ledger</h1>
+          <p className="text-xs font-medium text-muted-foreground font-medium">Strategic ledger of operations and cash movements</p>
         </div>
-        <Button onClick={openAddDialog}>
-          <Plus className="mr-1.5 h-4 w-4" />
+        <Button
+          onClick={openAddDialog}
+          className="rounded-xl px-4 py-2.5 bg-primary text-primary-foreground font-semibold hover:-translate-y-0.5 shadow-md shadow-primary/20 hover:shadow-primary/35 flex items-center gap-1.5 transition-all duration-200"
+        >
+          <Plus className="h-4 w-4" />
           Add Transaction
         </Button>
       </div>
 
-      {/* Filter Bar */}
-      <Card className="bg-card/60 backdrop-blur-sm">
-        <CardContent className="p-4">
-          <div className="flex flex-wrap items-end gap-3">
-            <div className="flex-1 min-w-[200px]">
-              <Label className="mb-1.5 block text-xs text-muted-foreground">Search</Label>
-              <div className="relative">
-                <Search className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  placeholder="Search transactions..."
-                  className="pl-8"
-                  value={search}
-                  onChange={(e) => { setSearch(e.target.value); setPage(1) }}
-                />
-              </div>
+      {/* Control Panel Filter bar */}
+      <GlowCard className="p-5" glowSize={300}>
+        <div className="flex items-center gap-2 pb-3 mb-4 border-b border-border/20 text-muted-foreground">
+          <SlidersHorizontal className="h-4 w-4" />
+          <span className="text-[10px] font-bold uppercase tracking-widest text-foreground">Advanced Query Filters</span>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 items-end">
+          
+          <div className="sm:col-span-2">
+            <Label className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Search</Label>
+            <div className="relative">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Search description..."
+                className="pl-9 pr-3 py-1.5 text-xs h-9 bg-secondary/40 border-border/80 rounded-xl"
+                value={search}
+                onChange={(e) => { setSearch(e.target.value); setPage(1) }}
+              />
             </div>
-
-            <div className="w-[130px]">
-              <Label className="mb-1.5 block text-xs text-muted-foreground">Type</Label>
-              <Select
-                value={typeFilter}
-                onValueChange={(v) => { setTypeFilter(v ?? ""); setPage(1) }}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="All types" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="">All types</SelectItem>
-                  <SelectItem value="INCOME">Income</SelectItem>
-                  <SelectItem value="EXPENSE">Expense</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="w-[150px]">
-              <Label className="mb-1.5 block text-xs text-muted-foreground">Category</Label>
-              <Select
-                value={categoryFilter}
-                onValueChange={(v) => { setCategoryFilter(v ?? ""); setPage(1) }}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="All categories" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="">All categories</SelectItem>
-                  {allFilteredCategories.map((cat) => (
-                    <SelectItem key={cat.id} value={cat.id}>
-                      {cat.icon} {cat.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="w-[140px]">
-              <Label className="mb-1.5 block text-xs text-muted-foreground">Wallet</Label>
-              <Select
-                value={walletFilter}
-                onValueChange={(v) => { setWalletFilter(v ?? ""); setPage(1) }}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="All wallets" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="">All wallets</SelectItem>
-                  {wallets.map((w) => (
-                    <SelectItem key={w.id} value={w.id}>
-                      {w.icon} {w.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="w-[150px]">
-              <Label className="mb-1.5 block text-xs text-muted-foreground">From</Label>
-              <Popover>
-                <PopoverTrigger render={<Button variant="outline" className="w-full justify-start text-left font-normal" />}>
-                  <CalendarIcon className="mr-1 h-4 w-4" />
-                  {dateFrom ? formatDate(dateFrom) : "Pick date"}
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={dateFrom}
-                    onSelect={(d) => { setDateFrom(d); setPage(1) }}
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-
-            <div className="w-[150px]">
-              <Label className="mb-1.5 block text-xs text-muted-foreground">To</Label>
-              <Popover>
-                <PopoverTrigger render={<Button variant="outline" className="w-full justify-start text-left font-normal" />}>
-                  <CalendarIcon className="mr-1 h-4 w-4" />
-                  {dateTo ? formatDate(dateTo) : "Pick date"}
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={dateTo}
-                    onSelect={(d) => { setDateTo(d); setPage(1) }}
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-
-            {hasFilters && (
-              <Button variant="ghost" size="sm" onClick={resetFilters} className="h-8">
-                <X className="mr-1 h-3 w-3" />
-                Clear filters
-              </Button>
-            )}
           </div>
-        </CardContent>
-      </Card>
 
-      {/* Transactions Table */}
-      <Card className="bg-card/60 backdrop-blur-sm">
-        <CardContent className="p-0">
-          {loading ? (
-            <div className="space-y-3 p-4">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <Skeleton key={i} className="h-12 w-full" />
-              ))}
-            </div>
-          ) : error ? (
-            <div className="flex flex-col items-center py-12 text-center">
-              <AlertTriangle className="mb-3 h-8 w-8 text-red-400" />
-              <p className="text-sm text-muted-foreground">{error}</p>
-              <Button variant="outline" size="sm" className="mt-3" onClick={fetchTransactions}>
-                Retry
-              </Button>
-            </div>
-          ) : !data || data.transactions.length === 0 ? (
-            <div className="flex flex-col items-center py-12 text-center">
-              <p className="text-sm text-muted-foreground">No transactions found</p>
-              <Button variant="outline" size="sm" className="mt-3" onClick={openAddDialog}>
-                Add your first transaction
-              </Button>
-            </div>
-          ) : (
-            <>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Description</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Wallet</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead className="text-right">Amount</TableHead>
-                    <TableHead className="w-[80px] text-right">Actions</TableHead>
+          <div>
+            <Label className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Type</Label>
+            <Select
+              value={typeFilter}
+              onValueChange={(v) => { setTypeFilter(v === "ALL" || !v ? "" : v); setPage(1) }}
+            >
+              <SelectTrigger className="w-full text-xs h-9 rounded-xl bg-secondary/40 border-border/85">
+                <SelectValue placeholder="All flows" />
+              </SelectTrigger>
+              <SelectContent className="border-border">
+                <SelectItem value="ALL">All flows</SelectItem>
+                <SelectItem value="INCOME">Inbound</SelectItem>
+                <SelectItem value="EXPENSE">Outbound</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <Label className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Category</Label>
+            <Select
+              value={categoryFilter}
+              onValueChange={(v) => { setCategoryFilter(v === "ALL" || !v ? "" : v); setPage(1) }}
+            >
+              <SelectTrigger className="w-full text-xs h-9 rounded-xl bg-secondary/40 border-border/85">
+                <SelectValue placeholder="All categories" />
+              </SelectTrigger>
+              <SelectContent className="border-border">
+                <SelectItem value="ALL">All categories</SelectItem>
+                {allFilteredCategories.map((cat) => (
+                  <SelectItem key={cat.id} value={cat.id}>
+                    {cat.icon} {cat.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <Label className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Vault Wallet</Label>
+            <Select
+              value={walletFilter}
+              onValueChange={(v) => { setWalletFilter(v === "ALL" || !v ? "" : v); setPage(1) }}
+            >
+              <SelectTrigger className="w-full text-xs h-9 rounded-xl bg-secondary/40 border-border/85">
+                <SelectValue placeholder="All wallets" />
+              </SelectTrigger>
+              <SelectContent className="border-border">
+                <SelectItem value="ALL">All wallets</SelectItem>
+                {wallets.map((w) => (
+                  <SelectItem key={w.id} value={w.id}>
+                    {w.icon} {w.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex gap-2">
+            <Popover>
+              <PopoverTrigger render={<Button variant="outline" className="text-xs h-9 w-full justify-start font-medium bg-secondary/40 rounded-xl" />}>
+                <CalendarIcon className="mr-1.5 h-3.5 w-3.5 text-muted-foreground" />
+                {dateFrom ? formatDate(dateFrom) : "From"}
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0 border-border shadow-premium-4 bg-popover">
+                <Calendar
+                  mode="single"
+                  selected={dateFrom}
+                  onSelect={(d) => { setDateFrom(d); setPage(1) }}
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+
+        </div>
+
+        {hasFilters && (
+          <div className="flex justify-end mt-4 pt-3 border-t border-border/10">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={resetFilters}
+              className="text-[11px] font-bold text-rose-500 hover:bg-rose-500/10 rounded-lg h-8 py-1 px-3"
+            >
+              <X className="mr-1 h-3.5 w-3.5" />
+              Clear query filters
+            </Button>
+          </div>
+        )}
+      </GlowCard>
+
+      {/* Airtable-like Operations Table */}
+      <GlowCard className="p-0 overflow-hidden">
+        {loading ? (
+          <div className="space-y-3 p-6">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <Skeleton key={i} className="h-11 w-full rounded-lg" />
+            ))}
+          </div>
+        ) : error ? (
+          <div className="flex flex-col items-center py-16 text-center">
+            <AlertTriangle className="mb-3 h-10 w-10 text-red-500 animate-bounce" />
+            <p className="text-sm font-semibold text-foreground">Sync Failure</p>
+            <p className="text-xs text-muted-foreground mt-1">{error}</p>
+            <Button variant="outline" size="sm" className="mt-4 rounded-xl px-4 py-2 text-xs" onClick={fetchTransactions}>
+              Retry Query
+            </Button>
+          </div>
+        ) : !data || data.transactions.length === 0 ? (
+          <div className="flex flex-col items-center py-16 text-center">
+            <Sparkles className="mb-3 h-10 w-10 text-indigo-400 animate-pulse" />
+            <p className="text-sm font-bold text-foreground">Ledger is Empty</p>
+            <p className="text-xs text-muted-foreground mt-1 max-w-sm">No transaction matches identified for your query parameter.</p>
+            <Button variant="outline" size="sm" className="mt-4 rounded-xl px-4 py-2 text-xs" onClick={openAddDialog}>
+              Create Entry
+            </Button>
+          </div>
+        ) : (
+          <>
+            <div className="overflow-x-auto">
+              <Table className="text-xs">
+                <TableHeader className="bg-secondary/40 border-b border-border/40">
+                  <TableRow className="hover:bg-transparent">
+                    <TableHead className="font-bold uppercase tracking-wider text-muted-foreground py-3.5 px-6">Description</TableHead>
+                    <TableHead className="font-bold uppercase tracking-wider text-muted-foreground py-3.5">Category</TableHead>
+                    <TableHead className="font-bold uppercase tracking-wider text-muted-foreground py-3.5">Linked Vault</TableHead>
+                    <TableHead className="font-bold uppercase tracking-wider text-muted-foreground py-3.5">Date</TableHead>
+                    <TableHead className="font-bold uppercase tracking-wider text-muted-foreground py-3.5">Recurring</TableHead>
+                    <TableHead className="font-bold uppercase tracking-wider text-muted-foreground py-3.5 text-right">Flow Value</TableHead>
+                    <TableHead className="w-[100px] font-bold uppercase tracking-wider text-muted-foreground text-right py-3.5 px-6">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
-                <TableBody>
+                <TableBody className="divide-y divide-border/20">
                   {data.transactions.map((tx) => (
-                    <TableRow key={tx.id}>
-                      <TableCell className="font-medium">
+                    <TableRow key={tx.id} className="hover:bg-secondary/20 transition-all duration-200">
+                      <TableCell className="font-semibold text-foreground py-3.5 px-6">
                         {tx.description || tx.category.name}
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-1.5">
-                          <span>{tx.category.icon}</span>
-                          <span className="text-sm">{tx.category.name}</span>
+                        <div className="flex items-center gap-2">
+                          <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-secondary border border-border/30 text-sm shadow-sm">{tx.category.icon}</span>
+                          <span className="font-medium text-foreground">{tx.category.name}</span>
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-1.5">
-                          <span>{tx.wallet.icon}</span>
-                          <span className="text-sm">{tx.wallet.name}</span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm">{tx.wallet.icon}</span>
+                          <span className="font-semibold text-muted-foreground text-[11px] bg-secondary/50 px-2 py-0.5 rounded-md border">{tx.wallet.name}</span>
                         </div>
                       </TableCell>
-                      <TableCell className="text-muted-foreground">
+                      <TableCell className="text-muted-foreground font-medium">
                         {formatDate(tx.date)}
                       </TableCell>
                       <TableCell>
-                        <Badge
-                          variant={tx.type === "INCOME" ? "default" : "destructive"}
-                          className={
-                            tx.type === "INCOME"
-                              ? "bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30"
-                              : ""
-                          }
-                        >
-                          {tx.type === "INCOME" ? "Income" : "Expense"}
-                        </Badge>
+                        {(tx as any).isRecurring ? (
+                          <Badge className="bg-indigo-500/10 text-primary hover:bg-indigo-500/15 text-[9px] font-bold py-0.5 px-1.5 border border-indigo-500/20 rounded">
+                            {(tx as any).recurringInterval || "MONTHLY"}
+                          </Badge>
+                        ) : (
+                          <span className="text-[10px] text-muted-foreground font-bold">—</span>
+                        )}
                       </TableCell>
                       <TableCell
-                        className={`text-right font-semibold ${
-                          tx.type === "INCOME" ? "text-emerald-400" : "text-rose-400"
+                        className={`text-right font-extrabold text-[13px] ${
+                          tx.type === "INCOME" ? "text-emerald-500" : "text-rose-500"
                         }`}
                       >
                         {tx.type === "INCOME" ? "+" : "-"}
                         {formatCurrency(tx.amount)}
                       </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex items-center justify-end gap-1">
+                      <TableCell className="text-right py-3.5 px-6">
+                        <div className="flex items-center justify-end gap-1.5">
                           <Button
                             variant="ghost"
                             size="icon-xs"
                             onClick={() => openEditDialog(tx)}
+                            className="h-7 w-7 rounded-lg hover:bg-secondary border border-transparent hover:border-border/40"
                           >
                             <Pencil className="h-3.5 w-3.5" />
                           </Button>
@@ -501,7 +492,7 @@ export default function TransactionsPage() {
                             variant="ghost"
                             size="icon-xs"
                             onClick={() => handleDelete(tx.id)}
-                            className="text-red-400 hover:text-red-300"
+                            className="h-7 w-7 rounded-lg hover:bg-rose-500/10 text-rose-500 hover:text-rose-400 border border-transparent hover:border-rose-500/20"
                           >
                             <Trash2 className="h-3.5 w-3.5" />
                           </Button>
@@ -511,134 +502,145 @@ export default function TransactionsPage() {
                   ))}
                 </TableBody>
               </Table>
+            </div>
 
-              {/* Pagination */}
-              {data.pagination.totalPages > 1 && (
-                <div className="flex items-center justify-between border-t px-4 py-3">
-                  <p className="text-sm text-muted-foreground">
-                    Showing {(data.pagination.page - 1) * data.pagination.limit + 1}–
-                    {Math.min(data.pagination.page * data.pagination.limit, data.pagination.total)} of{" "}
-                    {data.pagination.total}
-                  </p>
-                  <div className="flex items-center gap-1">
-                    <Button
-                      variant="outline"
-                      size="icon-sm"
-                      disabled={page <= 1}
-                      onClick={() => setPage((p) => Math.max(1, p - 1))}
-                    >
-                      <ChevronLeft className="h-4 w-4" />
-                    </Button>
-                    {Array.from({ length: data.pagination.totalPages }, (_, i) => i + 1).map(
-                      (p) => (
-                        <Button
-                          key={p}
-                          variant={p === page ? "default" : "outline"}
-                          size="icon-sm"
-                          onClick={() => setPage(p)}
-                          className={p === page ? "" : ""}
-                        >
-                          {p}
-                        </Button>
-                      )
-                    )}
-                    <Button
-                      variant="outline"
-                      size="icon-sm"
-                      disabled={page >= data.pagination.totalPages}
-                      onClick={() => setPage((p) => p + 1)}
-                    >
-                      <ChevronRight className="h-4 w-4" />
-                    </Button>
-                  </div>
+            {/* Pagination Controls */}
+            {data.pagination.totalPages > 1 && (
+              <div className="flex items-center justify-between border-t border-border/30 px-6 py-4 bg-secondary/10">
+                <p className="text-[10px] font-semibold text-muted-foreground">
+                  Showing {(data.pagination.page - 1) * data.pagination.limit + 1}–
+                  {Math.min(data.pagination.page * data.pagination.limit, data.pagination.total)} of{" "}
+                  {data.pagination.total} entries
+                </p>
+                <div className="flex items-center gap-1.5">
+                  <Button
+                    variant="outline"
+                    size="icon-sm"
+                    disabled={page <= 1}
+                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    className="h-8 w-8 rounded-lg bg-background"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                  {Array.from({ length: data.pagination.totalPages }, (_, i) => i + 1).map(
+                    (p) => (
+                      <Button
+                        key={p}
+                        variant={p === page ? "default" : "outline"}
+                        size="icon-sm"
+                        onClick={() => setPage(p)}
+                        className={`h-8 w-8 rounded-lg font-bold text-xs ${
+                          p === page ? "bg-primary text-primary-foreground shadow" : "bg-background"
+                        }`}
+                      >
+                        {p}
+                      </Button>
+                    )
+                  )}
+                  <Button
+                    variant="outline"
+                    size="icon-sm"
+                    disabled={page >= data.pagination.totalPages}
+                    onClick={() => setPage((p) => p + 1)}
+                    className="h-8 w-8 rounded-lg bg-background"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
                 </div>
-              )}
-            </>
-          )}
-        </CardContent>
-      </Card>
+              </div>
+            )}
+          </>
+        )}
+      </GlowCard>
 
-      {/* Add/Edit Transaction Dialog */}
+      {/* dialog styled premium */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md border border-border bg-popover text-foreground rounded-2xl shadow-premium-4 p-6 overflow-hidden">
           <DialogHeader>
-            <DialogTitle>{editingId ? "Edit Transaction" : "Add Transaction"}</DialogTitle>
-            <DialogDescription>
-              {editingId ? "Update the transaction details below." : "Fill in the details to add a new transaction."}
+            <DialogTitle className="text-sm font-bold tracking-tight text-foreground uppercase tracking-widest flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-primary animate-pulse" />
+              {editingId ? "Modify Operation Parameter" : "Create Operation Parameter"}
+            </DialogTitle>
+            <DialogDescription className="text-[10px] font-medium text-muted-foreground mt-1">
+              {editingId ? "Update existing financial ledger parameters." : "Define inbound/outbound financial ledger details."}
             </DialogDescription>
           </DialogHeader>
 
-          <div className="grid gap-4 py-2">
-            {/* Type */}
-            <div className="grid grid-cols-2 gap-2">
+          <div className="grid gap-4 py-4 text-xs font-semibold">
+            {/* Flow Type selector */}
+            <div className="grid grid-cols-2 gap-2.5">
               <Button
                 type="button"
                 variant={form.type === "EXPENSE" ? "destructive" : "outline"}
                 onClick={() => setForm({ ...form, type: "EXPENSE" })}
-                className={form.type === "EXPENSE" ? "ring-1 ring-rose-500/50" : ""}
+                className={`rounded-xl h-10 font-bold ${
+                  form.type === "EXPENSE" ? "bg-rose-500 hover:bg-rose-650 shadow" : "border-border/80"
+                }`}
               >
                 <TrendingDown className="mr-1.5 h-4 w-4" />
-                Expense
+                Outbound (Expense)
               </Button>
               <Button
                 type="button"
                 variant={form.type === "INCOME" ? "default" : "outline"}
                 onClick={() => setForm({ ...form, type: "INCOME" })}
-                className={form.type === "INCOME" ? "bg-emerald-600 hover:bg-emerald-700 ring-1 ring-emerald-500/50" : ""}
+                className={`rounded-xl h-10 font-bold ${
+                  form.type === "INCOME" ? "bg-primary hover:bg-indigo-650 shadow" : "border-border/80"
+                }`}
               >
                 <TrendingUp className="mr-1.5 h-4 w-4" />
-                Income
+                Inbound (Income)
               </Button>
             </div>
 
             {/* Amount */}
-            <div>
-              <Label htmlFor="amount">Amount (IDR)</Label>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="amount" className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Amount (IDR)</Label>
               <Input
                 id="amount"
                 type="number"
                 placeholder="0"
+                className="bg-secondary/40 border-border/80 rounded-xl h-10 px-3 py-1.5 font-bold"
                 value={form.amount}
                 onChange={(e) => setForm({ ...form, amount: e.target.value })}
               />
             </div>
 
             {/* Description */}
-            <div>
-              <Label htmlFor="description">Description</Label>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="description" className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Description</Label>
               <Input
                 id="description"
-                placeholder="e.g. Grocery shopping"
+                placeholder="e.g. Server hosting fee"
+                className="bg-secondary/40 border-border/80 rounded-xl h-10 px-3 py-1.5"
                 value={form.description}
                 onChange={(e) => setForm({ ...form, description: e.target.value })}
               />
             </div>
 
             {/* Date */}
-            <div>
-              <Label htmlFor="date">Date</Label>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="date" className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Operation Date</Label>
               <Input
                 id="date"
                 type="date"
+                className="bg-secondary/40 border-border/80 rounded-xl h-10 px-3 py-1.5 font-medium"
                 value={form.date}
                 onChange={(e) => setForm({ ...form, date: e.target.value })}
               />
             </div>
 
-            {/* Wallet */}
-            <div>
-              <Label>Wallet</Label>
+            {/* Wallet Vault */}
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Linked Vault Wallet</Label>
               <Select
                 value={form.walletId}
-                onValueChange={(v) => {
-                  const val = v as string
-                  setForm({ ...form, walletId: val })
-                }}
+                onValueChange={(v) => setForm({ ...form, walletId: v || "" })}
               >
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="w-full h-10 rounded-xl bg-secondary/40 border-border/80 text-xs">
                   <SelectValue placeholder="Select wallet" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="border-border bg-popover">
                   {wallets.map((w) => (
                     <SelectItem key={w.id} value={w.id}>
                       {w.icon} {w.name} ({formatCurrency(w.balance)})
@@ -648,20 +650,17 @@ export default function TransactionsPage() {
               </Select>
             </div>
 
-            {/* Category */}
-            <div>
-              <Label>Category</Label>
+            {/* Category Taxonomy */}
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Category Taxonomy</Label>
               <Select
                 value={form.categoryId}
-                onValueChange={(v) => {
-                  const val = v as string
-                  setForm({ ...form, categoryId: val })
-                }}
+                onValueChange={(v) => setForm({ ...form, categoryId: v || "" })}
               >
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="w-full h-10 rounded-xl bg-secondary/40 border-border/80 text-xs">
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="border-border bg-popover">
                   {(form.type === "INCOME" ? incomeCategories : expenseCategories).map((c) => (
                     <SelectItem key={c.id} value={c.id}>
                       {c.icon} {c.name}
@@ -671,51 +670,52 @@ export default function TransactionsPage() {
               </Select>
             </div>
 
-            {/* Recurring toggle */}
-            <div className="flex items-center gap-2">
+            {/* Recurring parameters */}
+            <div className="flex items-center gap-2.5 py-1">
               <input
                 type="checkbox"
                 id="isRecurring"
                 checked={form.isRecurring}
                 onChange={(e) => setForm({ ...form, isRecurring: e.target.checked })}
-                className="h-4 w-4 rounded border-border bg-transparent"
+                className="h-4 w-4 rounded-lg border-border bg-secondary/60 focus:ring-primary/20 accent-primary text-primary transition-all cursor-pointer"
               />
-              <Label htmlFor="isRecurring" className="text-sm font-normal">
-                Recurring transaction
+              <Label htmlFor="isRecurring" className="text-[11px] font-semibold text-foreground select-none cursor-pointer">
+                Recurring automated calendar rule
               </Label>
             </div>
 
             {form.isRecurring && (
-              <div>
-                <Label>Interval</Label>
+              <div className="flex flex-col gap-1.5 animate-in slide-in-from-top-1.5 duration-200">
+                <Label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Automated Interval</Label>
                 <Select
                   value={form.recurringInterval}
-                  onValueChange={(v) => {
-                    const val = v as string
-                    setForm({ ...form, recurringInterval: val })
-                  }}
+                  onValueChange={(v) => setForm({ ...form, recurringInterval: v || "" })}
                 >
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger className="w-full h-10 rounded-xl bg-secondary/40 border-border/80 text-xs">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="DAILY">Daily</SelectItem>
-                    <SelectItem value="WEEKLY">Weekly</SelectItem>
-                    <SelectItem value="MONTHLY">Monthly</SelectItem>
-                    <SelectItem value="YEARLY">Yearly</SelectItem>
+                  <SelectContent className="border-border bg-popover">
+                    <SelectItem value="DAILY">Daily Flow</SelectItem>
+                    <SelectItem value="WEEKLY">Weekly Flow</SelectItem>
+                    <SelectItem value="MONTHLY">Monthly Flow</SelectItem>
+                    <SelectItem value="YEARLY">Yearly Flow</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             )}
           </div>
 
-          <DialogFooter>
-            <DialogClose render={<Button variant="outline" />}>
+          <DialogFooter className="gap-2.5">
+            <DialogClose render={<Button variant="outline" className="rounded-xl font-bold h-10" />}>
               Cancel
             </DialogClose>
-            <Button onClick={handleSubmit} disabled={submitting}>
+            <Button
+              onClick={handleSubmit}
+              disabled={submitting}
+              className="bg-primary text-primary-foreground font-semibold hover:-translate-y-0.5 rounded-xl h-10 px-5 transition-all shadow-md shadow-primary/20"
+            >
               {submitting && <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />}
-              {editingId ? "Update" : "Create"}
+              {editingId ? "Update Parameters" : "Commit Entry"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -723,5 +723,3 @@ export default function TransactionsPage() {
     </div>
   )
 }
-
-

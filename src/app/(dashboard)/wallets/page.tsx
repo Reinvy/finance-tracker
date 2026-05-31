@@ -9,19 +9,14 @@ import {
   Trash2,
   Loader2,
   AlertTriangle,
+  Sparkles,
   CreditCard,
-  Landmark,
-  PiggyBank,
+  Layers,
 } from "lucide-react"
 import { toast } from "sonner"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card"
+import { GlowCard } from "@/components/ui/glow-card"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import {
   Dialog,
@@ -30,7 +25,6 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-  DialogTrigger,
   DialogClose,
 } from "@/components/ui/dialog"
 import {
@@ -72,13 +66,13 @@ const emptyForm: WalletForm = {
 
 const ICON_OPTIONS = [
   { value: "wallet", label: "👛 Wallet" },
-  { value: "bank", label: "🏦 Bank" },
+  { value: "bank", label: "🏦 Bank Vault" },
   { value: "credit-card", label: "💳 Credit Card" },
-  { value: "piggy-bank", label: "🐷 Piggy Bank" },
-  { value: "building", label: "🏢 Building" },
-  { value: "coins", label: "🪙 Coins" },
-  { value: "safe", label: "🔒 Safe" },
-  { value: "cash", label: "💵 Cash" },
+  { value: "piggy-bank", label: "🐷 Piggy Savings" },
+  { value: "building", label: "🏢 Corporate" },
+  { value: "coins", label: "🪙 Token Assets" },
+  { value: "safe", label: "🔒 Cold Storage" },
+  { value: "cash", label: "💵 Physical Cash" },
 ]
 
 const COLOR_OPTIONS = [
@@ -198,194 +192,202 @@ export default function WalletsPage() {
   }
 
   if (loading) {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <Skeleton className="h-8 w-32" />
-            <Skeleton className="mt-2 h-4 w-48" />
-          </div>
-          <Skeleton className="h-9 w-36" />
-        </div>
-        <Skeleton className="h-24 w-full" />
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-40 w-full" />
-          ))}
-        </div>
-      </div>
-    )
+    return <WalletsSkeleton />
   }
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-center">
-        <AlertTriangle className="mb-4 h-12 w-12 text-red-400" />
-        <h2 className="text-xl font-semibold text-foreground">Failed to load wallets</h2>
-        <p className="mt-2 text-sm text-muted-foreground">{error}</p>
-        <Button className="mt-6" onClick={fetchWallets}>
-          Try again
+      <div className="flex flex-col items-center justify-center py-24 text-center">
+        <AlertTriangle className="mb-4 h-12 w-12 text-red-500 animate-bounce" />
+        <h2 className="text-xl font-bold text-foreground">Sync Error</h2>
+        <p className="mt-2 text-sm text-muted-foreground max-w-sm">{error}</p>
+        <Button className="mt-6 px-5 py-2.5 rounded-xl font-semibold" onClick={fetchWallets}>
+          Retry Sync
         </Button>
       </div>
     )
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-3 duration-300">
+      
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">Wallets</h1>
-          <p className="text-sm text-muted-foreground">Manage your financial accounts</p>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">Liquidity Centers</h1>
+          <p className="text-xs font-medium text-muted-foreground font-medium">Manage and audit linked corporate or family vaults</p>
         </div>
-        <Button onClick={openAddDialog}>
-          <Plus className="mr-1.5 h-4 w-4" />
+        <Button
+          onClick={openAddDialog}
+          className="rounded-xl px-4 py-2.5 bg-primary text-primary-foreground font-semibold hover:-translate-y-0.5 shadow-md shadow-primary/20 hover:shadow-primary/35 flex items-center gap-1.5 transition-all duration-200"
+        >
+          <Plus className="h-4 w-4" />
           Add Wallet
         </Button>
       </div>
 
-      {/* Total Balance Summary */}
-      <Card className="relative overflow-hidden border-0 bg-gradient-to-br from-indigo-600/20 via-indigo-500/10 to-transparent ring-1 ring-indigo-500/30">
-        <div className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-indigo-500/20 blur-3xl" />
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium text-indigo-200">Total Balance</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-3xl font-bold text-indigo-50">{formatCurrency(totalBalance)}</div>
-          <p className="mt-1 text-xs text-indigo-300/70">{wallets.length} wallet{wallets.length !== 1 ? "s" : ""}</p>
-        </CardContent>
-      </Card>
+      {/* Net Worth Glass Banner */}
+      <GlowCard className="p-6 border-indigo-500/20 bg-indigo-500/5 shadow-premium-3" glowColor="rgba(99, 102, 241, 0.15)">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="rounded-xl border border-indigo-500/20 bg-indigo-550/10 p-2 text-indigo-550 shadow-sm">
+              <Layers className="h-5 w-5 text-indigo-500 animate-pulse" />
+            </div>
+            <div>
+              <p className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider">Total Combined Liquidity</p>
+              <h2 className="text-3xl font-extrabold text-foreground tracking-tight mt-0.5">{formatCurrency(totalBalance)}</h2>
+            </div>
+          </div>
+          <Badge className="bg-indigo-500/10 text-indigo-500 border border-indigo-500/20 font-bold text-[10px] py-1 px-3.5 rounded-full uppercase tracking-wider">
+            {wallets.length} active seat{wallets.length !== 1 ? "s" : ""}
+          </Badge>
+        </div>
+      </GlowCard>
 
-      {/* Wallet Cards */}
+      {/* Wallets grid designed as luxury credit cards */}
       {wallets.length === 0 ? (
-        <div className="flex flex-col items-center py-16 text-center">
-          <Wallet className="mb-3 h-12 w-12 text-muted-foreground" />
-          <h3 className="text-lg font-medium text-foreground">No wallets yet</h3>
-          <p className="mt-1 text-sm text-muted-foreground">Create your first wallet to start tracking finances.</p>
-          <Button className="mt-4" onClick={openAddDialog}>
+        <div className="flex flex-col items-center py-20 text-center">
+          <Wallet className="mb-4 h-12 w-12 text-muted-foreground animate-pulse" />
+          <h3 className="text-sm font-bold text-foreground">No vaults connected</h3>
+          <p className="text-xs text-muted-foreground mt-1 max-w-sm">Establish a premium wallet connector to audit transactions.</p>
+          <Button className="mt-6 rounded-xl font-semibold" onClick={openAddDialog}>
             <Plus className="mr-1.5 h-4 w-4" />
-            Create Wallet
+            Connect Vault
           </Button>
         </div>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {wallets.map((wallet) => (
-            <Card
+            <GlowCard
               key={wallet.id}
-              className="relative overflow-hidden border-0 bg-card/60 backdrop-blur-sm ring-1"
-              style={{ "--tw-ring-color": `${wallet.color}40` } as React.CSSProperties}
+              glowColor={`${wallet.color}20`}
+              glowSize={300}
+              className="p-6 relative rounded-2xl overflow-hidden min-h-[180px] flex flex-col justify-between"
+              style={{ borderColor: `${wallet.color}35` }}
             >
-              {/* Color accent bar */}
+              {/* Corner Glowing Highlight Accent */}
               <div
-                className="absolute left-0 top-0 h-full w-1"
+                className="absolute -right-10 -top-10 h-28 w-28 rounded-full blur-3xl opacity-35"
                 style={{ backgroundColor: wallet.color }}
               />
-              {/* Glow */}
-              <div
-                className="pointer-events-none absolute -right-6 -top-6 h-20 w-20 rounded-full blur-2xl"
-                style={{ backgroundColor: `${wallet.color}15` }}
-              />
 
-              <CardHeader className="flex flex-row items-start justify-between pb-2 pl-5">
+              {/* Card Header Info */}
+              <div className="flex items-start justify-between z-10">
                 <div className="flex items-center gap-3">
                   <div
-                    className="flex h-10 w-10 items-center justify-center rounded-xl text-lg"
-                    style={{ backgroundColor: `${wallet.color}20` }}
+                    className="flex h-10 w-10 items-center justify-center rounded-xl text-lg shadow-sm border border-border/30"
+                    style={{ backgroundColor: `${wallet.color}15`, color: wallet.color }}
                   >
-                    <span>{getIconEmoji(wallet.icon)}</span>
+                    {getIconEmoji(wallet.icon)}
                   </div>
                   <div>
-                    <CardTitle className="text-base text-foreground">{wallet.name}</CardTitle>
-                    <CardDescription className="text-xs capitalize">{wallet.type}</CardDescription>
+                    <h3 className="text-xs font-bold text-foreground leading-tight">{wallet.name}</h3>
+                    <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest mt-0.5 block">{wallet.type}</span>
                   </div>
                 </div>
-                <div className="flex gap-0.5">
-                  <Button
-                    variant="ghost"
-                    size="icon-xs"
+
+                <div className="flex gap-1.5">
+                  <button
                     onClick={() => openEditDialog(wallet)}
+                    className="h-7 w-7 rounded-lg hover:bg-secondary border border-transparent hover:border-border/50 text-muted-foreground hover:text-foreground flex items-center justify-center transition-colors"
                   >
                     <Pencil className="h-3.5 w-3.5" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon-xs"
+                  </button>
+                  <button
                     onClick={() => handleDelete(wallet.id)}
-                    className="text-red-400 hover:text-red-300"
+                    className="h-7 w-7 rounded-lg hover:bg-rose-500/10 text-muted-foreground hover:text-rose-500 flex items-center justify-center transition-colors border border-transparent hover:border-rose-500/20"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
-                  </Button>
+                  </button>
                 </div>
-              </CardHeader>
-              <CardContent className="pl-5">
-                <div className="text-2xl font-bold" style={{ color: wallet.color }}>
+              </div>
+
+              {/* Decorative credit card SIM chip overlay */}
+              <div className="mt-6 flex justify-between items-center z-10 opacity-60">
+                <div className="w-8 h-6 rounded bg-gradient-to-br from-amber-400 to-amber-600 border border-amber-500/35 relative overflow-hidden shadow-inner">
+                  <div className="absolute top-1/2 left-0 right-0 h-[1px] bg-amber-700/30" />
+                  <div className="absolute top-0 bottom-0 left-1/2 w-[1px] bg-amber-700/30" />
+                </div>
+                <CreditCard className="h-5 w-5 text-muted-foreground" />
+              </div>
+
+              {/* Large Balance Indicator */}
+              <div className="mt-6 z-10">
+                <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider">Operational Balance</span>
+                <div className="text-2xl font-extrabold tracking-tight mt-0.5" style={{ color: wallet.color }}>
                   {formatCurrency(wallet.balance)}
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+
+            </GlowCard>
           ))}
         </div>
       )}
 
       {/* Add/Edit Wallet Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md border border-border bg-popover text-foreground rounded-2xl shadow-premium-4 p-6 overflow-hidden">
           <DialogHeader>
-            <DialogTitle>{editingId ? "Edit Wallet" : "Add Wallet"}</DialogTitle>
-            <DialogDescription>
-              {editingId ? "Update your wallet details." : "Create a new wallet to track your money."}
+            <DialogTitle className="text-sm font-bold tracking-tight uppercase tracking-widest flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-primary animate-pulse" />
+              {editingId ? "Modify Vault parameters" : "Establish Vault Connector"}
+            </DialogTitle>
+            <DialogDescription className="text-[10px] font-medium text-muted-foreground mt-1">
+              {editingId ? "Update selected vault parameters." : "Connect a new vault source to audit transactions."}
             </DialogDescription>
           </DialogHeader>
 
-          <div className="grid gap-4 py-2">
+          <div className="grid gap-4 py-4 text-xs font-semibold">
             {/* Name */}
-            <div>
-              <Label htmlFor="walletName">Wallet Name</Label>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="walletName" className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider">Vault Name</Label>
               <Input
                 id="walletName"
-                placeholder="e.g. Main Account"
+                placeholder="e.g. Inbound Operations Vault"
+                className="bg-secondary/40 border-border/80 rounded-xl h-10 px-3"
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
               />
             </div>
 
             {/* Type */}
-            <div>
-              <Label>Type</Label>
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider">Vault Category</Label>
               <Select value={form.type} onValueChange={(v) => setForm({ ...form, type: v ?? "cash" })}>
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="w-full h-10 rounded-xl bg-secondary/40 border-border/80 text-xs">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="cash">Cash</SelectItem>
-                  <SelectItem value="bank">Bank Account</SelectItem>
-                  <SelectItem value="credit">Credit Card</SelectItem>
-                  <SelectItem value="savings">Savings</SelectItem>
-                  <SelectItem value="e-wallet">E-Wallet</SelectItem>
+                <SelectContent className="border-border bg-popover">
+                  <SelectItem value="cash">Physical Cash Ledger</SelectItem>
+                  <SelectItem value="bank">Commercial Bank Account</SelectItem>
+                  <SelectItem value="credit">Commercial Credit Card</SelectItem>
+                  <SelectItem value="savings">Long-Term Savings</SelectItem>
+                  <SelectItem value="e-wallet">Electronic E-Wallet</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             {/* Balance */}
-            <div>
-              <Label htmlFor="walletBalance">Initial Balance (IDR)</Label>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="walletBalance" className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider">Initial Balance (IDR)</Label>
               <Input
                 id="walletBalance"
                 type="number"
                 placeholder="0"
+                className="bg-secondary/40 border-border/80 rounded-xl h-10 px-3 font-bold"
                 value={form.balance}
                 onChange={(e) => setForm({ ...form, balance: e.target.value })}
               />
             </div>
 
             {/* Icon */}
-            <div>
-              <Label>Icon</Label>
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider">Vault Icon Identifier</Label>
               <Select value={form.icon} onValueChange={(v) => setForm({ ...form, icon: v ?? "" })}>
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="w-full h-10 rounded-xl bg-secondary/40 border-border/80 text-xs">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="border-border bg-popover">
                   {ICON_OPTIONS.map((opt) => (
                     <SelectItem key={opt.value} value={opt.value}>
                       {opt.label}
@@ -395,17 +397,17 @@ export default function WalletsPage() {
               </Select>
             </div>
 
-            {/* Color */}
-            <div>
-              <Label>Color</Label>
-              <div className="flex flex-wrap gap-2">
+            {/* Color accent selection */}
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider">Vault Aesthetic Glow Accent</Label>
+              <div className="flex flex-wrap gap-2 pt-1.5">
                 {COLOR_OPTIONS.map((color) => (
                   <button
                     key={color}
                     type="button"
                     onClick={() => setForm({ ...form, color })}
-                    className={`h-8 w-8 rounded-lg ring-2 ring-offset-2 ring-offset-background transition-all hover:scale-110 ${
-                      form.color === color ? "ring-foreground scale-110" : "ring-transparent"
+                    className={`h-7 w-7 rounded-lg ring-2 ring-offset-2 ring-offset-background transition-all hover:scale-110 ${
+                      form.color === color ? "ring-foreground scale-110 shadow" : "ring-transparent"
                     }`}
                     style={{ backgroundColor: color }}
                   />
@@ -414,13 +416,17 @@ export default function WalletsPage() {
             </div>
           </div>
 
-          <DialogFooter>
-            <DialogClose render={<Button variant="outline" />}>
+          <DialogFooter className="gap-2.5">
+            <DialogClose render={<Button variant="outline" className="rounded-xl font-bold h-10" />}>
               Cancel
             </DialogClose>
-            <Button onClick={handleSubmit} disabled={submitting}>
+            <Button
+              onClick={handleSubmit}
+              disabled={submitting}
+              className="bg-primary text-primary-foreground font-semibold hover:-translate-y-0.5 rounded-xl h-10 px-5 transition-all shadow-md shadow-primary/20"
+            >
               {submitting && <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />}
-              {editingId ? "Update" : "Create"}
+              {editingId ? "Update Parameters" : "Commit Link"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -441,4 +447,28 @@ function getIconEmoji(icon: string): string {
     cash: "💵",
   }
   return map[icon] || "👛"
+}
+
+function WalletsSkeleton() {
+  return (
+    <div className="space-y-8">
+      <div className="flex items-center justify-between">
+        <div>
+          <Skeleton className="h-8 w-36 rounded-xl" />
+          <Skeleton className="mt-2 h-4 w-60 rounded-lg" />
+        </div>
+        <Skeleton className="h-10 w-36 rounded-xl" />
+      </div>
+      <Skeleton className="h-24 w-full rounded-2xl" />
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {[1, 2, 3].map((i) => (
+          <GlowCard key={i} className="min-h-[180px]">
+            <Skeleton className="h-6 w-24 rounded-lg" />
+            <Skeleton className="mt-6 h-5 w-8 rounded-sm" />
+            <Skeleton className="mt-6 h-8 w-40 rounded-xl" />
+          </GlowCard>
+        ))}
+      </div>
+    </div>
+  )
 }

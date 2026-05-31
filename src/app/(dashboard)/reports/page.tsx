@@ -10,11 +10,13 @@ import {
   AlertTriangle,
   ChevronLeft,
   ChevronRight,
+  Sparkles,
+  Layers,
 } from "lucide-react"
 import { toast } from "sonner"
 import {
-  LineChart,
-  Line,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -25,13 +27,7 @@ import {
   Cell,
   Legend,
 } from "recharts"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card"
+import { GlowCard } from "@/components/ui/glow-card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -182,14 +178,14 @@ export default function ReportsPage() {
     }
   }
 
-  function nextMonth() {
+  const nextMonth = useCallback(() => {
     if (currentMonth === 11) {
       setCurrentMonth(0)
       setCurrentYear((y) => y + 1)
     } else {
       setCurrentMonth((m) => m + 1)
     }
-  }
+  }, [currentMonth])
 
   function exportCSV() {
     if (transactions.length === 0) {
@@ -219,295 +215,330 @@ export default function ReportsPage() {
   }
 
   if (loading) {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <Skeleton className="h-8 w-32" />
-            <Skeleton className="mt-2 h-4 w-48" />
-          </div>
-          <Skeleton className="h-9 w-36" />
-        </div>
-        <Skeleton className="h-12 w-full max-w-xs" />
-        <div className="grid gap-4 md:grid-cols-3">
-          {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-28 w-full" />
-          ))}
-        </div>
-        <div className="grid gap-4 md:grid-cols-2">
-          {[1, 2].map((i) => (
-            <Skeleton key={i} className="h-[300px] w-full" />
-          ))}
-        </div>
-      </div>
-    )
+    return <ReportsSkeleton />
   }
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-center">
-        <AlertTriangle className="mb-4 h-12 w-12 text-red-400" />
-        <h2 className="text-xl font-semibold text-foreground">Failed to load reports</h2>
-        <p className="mt-2 text-sm text-muted-foreground">{error}</p>
-        <Button className="mt-6" onClick={fetchData}>
-          Try again
+      <div className="flex flex-col items-center justify-center py-24 text-center">
+        <AlertTriangle className="mb-4 h-12 w-12 text-red-500 animate-bounce" />
+        <h2 className="text-xl font-bold text-foreground">Sync Error</h2>
+        <p className="mt-2 text-sm text-muted-foreground max-w-sm">{error}</p>
+        <Button className="mt-6 px-5 py-2.5 rounded-xl font-semibold" onClick={fetchData}>
+          Retry Sync
         </Button>
       </div>
     )
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-3 duration-300">
+      
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">Reports</h1>
-          <p className="text-sm text-muted-foreground">Analyze your financial data</p>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">Intelligence Hub</h1>
+          <p className="text-xs font-medium text-muted-foreground">Strategic summaries, rolling flows, and exports</p>
         </div>
-        <Button onClick={exportCSV} disabled={transactions.length === 0}>
-          <Download className="mr-1.5 h-4 w-4" />
-          Export CSV
+        <Button
+          onClick={exportCSV}
+          disabled={transactions.length === 0}
+          className="rounded-xl px-4 py-2.5 bg-primary text-primary-foreground font-semibold hover:-translate-y-0.5 shadow-md shadow-primary/20 hover:shadow-primary/35 flex items-center gap-1.5 transition-all duration-200"
+        >
+          <Download className="h-4 w-4" />
+          Export CSV Ledger
         </Button>
       </div>
 
-      {/* Month Picker */}
-      <Card className="bg-card/60 backdrop-blur-sm">
-        <CardContent className="flex items-center justify-between p-4">
+      {/* Month Slider Control Panel */}
+      <GlowCard className="p-4" glowSize={250}>
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <Button variant="outline" size="icon-sm" onClick={prevMonth}>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={prevMonth}
+              className="h-9 w-9 rounded-xl border-border bg-secondary/30"
+            >
               <ChevronLeft className="h-4 w-4" />
             </Button>
             <div className="min-w-[180px] text-center">
-              <p className="text-lg font-semibold text-foreground">
+              <span className="text-base font-extrabold text-foreground tracking-tight">
                 {monthNames[currentMonth]} {currentYear}
-              </p>
+              </span>
             </div>
-            <Button variant="outline" size="icon-sm" onClick={nextMonth}>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={nextMonth}
+              className="h-9 w-9 rounded-xl border-border bg-secondary/30"
+            >
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
-          <Badge variant="secondary" className="text-xs">
-            {transactions.length} transactions
+          <Badge className="bg-primary/10 text-primary border border-primary/20 text-[10px] font-bold py-1 px-3">
+            {transactions.length} operations parsed
           </Badge>
-        </CardContent>
-      </Card>
+        </div>
+      </GlowCard>
 
-      {/* Summary Cards */}
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card className="relative overflow-hidden border-0 bg-gradient-to-br from-emerald-600/20 via-emerald-500/10 to-transparent ring-1 ring-emerald-500/30">
-          <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-emerald-500/20 blur-2xl" />
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-emerald-200">Total Income</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-emerald-50">
+      {/* Summary KPI Cards */}
+      <div className="grid gap-6 md:grid-cols-3">
+        
+        <GlowCard glowColor="rgba(16, 185, 129, 0.12)" glowSize={250}>
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold text-emerald-500 uppercase tracking-wider">Inbound Allocation</span>
+            <div className="rounded-xl border border-emerald-550/10 bg-emerald-550/5 p-2 shadow-sm text-emerald-500">
+              <TrendingUp className="h-4 w-4" />
+            </div>
+          </div>
+          <div className="mt-4">
+            <span className="text-2xl font-extrabold text-emerald-500 tracking-tight">
               {formatCurrency(monthlyIncome)}
+            </span>
+            <div className="flex items-center gap-1 mt-2 text-[9px] text-muted-foreground font-semibold">
+              <span>{transactions.filter((t) => t.type === "INCOME").length} strategic deposits</span>
             </div>
-            <div className="mt-1 flex items-center gap-1 text-xs text-emerald-300/70">
-              <TrendingUp className="h-3 w-3" />
-              <span>{transactions.filter((t) => t.type === "INCOME").length} transactions</span>
-            </div>
-          </CardContent>
-        </Card>
+          </div>
+        </GlowCard>
 
-        <Card className="relative overflow-hidden border-0 bg-gradient-to-br from-rose-600/20 via-rose-500/10 to-transparent ring-1 ring-rose-500/30">
-          <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-rose-500/20 blur-2xl" />
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-rose-200">Total Expense</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-rose-50">
+        <GlowCard glowColor="rgba(244, 63, 94, 0.12)" glowSize={250}>
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold text-rose-500 uppercase tracking-wider">Outbound Allocation</span>
+            <div className="rounded-xl border border-rose-550/10 bg-rose-550/5 p-2 shadow-sm text-rose-500">
+              <TrendingDown className="h-4 w-4" />
+            </div>
+          </div>
+          <div className="mt-4">
+            <span className="text-2xl font-extrabold text-rose-500 tracking-tight">
               {formatCurrency(monthlyExpense)}
+            </span>
+            <div className="flex items-center gap-1 mt-2 text-[9px] text-muted-foreground font-semibold">
+              <span>{transactions.filter((t) => t.type === "EXPENSE").length} operational drafts</span>
             </div>
-            <div className="mt-1 flex items-center gap-1 text-xs text-rose-300/70">
-              <TrendingDown className="h-3 w-3" />
-              <span>{transactions.filter((t) => t.type === "EXPENSE").length} transactions</span>
-            </div>
-          </CardContent>
-        </Card>
+          </div>
+        </GlowCard>
 
-        <Card className="relative overflow-hidden border-0 bg-gradient-to-br from-indigo-600/20 via-indigo-500/10 to-transparent ring-1 ring-indigo-500/30">
-          <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-indigo-500/20 blur-2xl" />
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-indigo-200">Net Amount</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div
-              className={`text-2xl font-bold ${netAmount >= 0 ? "text-emerald-50" : "text-rose-50"}`}
-            >
-              {formatCurrency(Math.abs(netAmount))}
+        <GlowCard glowColor="rgba(99, 102, 241, 0.12)" glowSize={250}>
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold text-primary uppercase tracking-wider">Net Balance surplus</span>
+            <div className="rounded-xl border border-border/80 bg-secondary/55 p-2 shadow-sm text-primary">
+              <Wallet className="h-4 w-4" />
             </div>
-            <div className="mt-1 flex items-center gap-1 text-xs text-indigo-300/70">
-              <Wallet className="h-3 w-3" />
-              <span>{netAmount >= 0 ? "Surplus" : "Deficit"}</span>
+          </div>
+          <div className="mt-4">
+            <span className="text-2xl font-extrabold text-foreground tracking-tight">
+              {formatCurrency(netAmount)}
+            </span>
+            <div className="flex items-center gap-1 mt-2 text-[9px] font-bold text-primary">
+              <span>{netAmount >= 0 ? "Surplus operational buffer" : "Deficit budget gap"}</span>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </GlowCard>
+
       </div>
 
-      {/* Charts */}
-      <div className="grid gap-4 md:grid-cols-2">
-        {/* Category Breakdown Pie */}
-        <Card className="bg-card/60 backdrop-blur-sm">
-          <CardHeader>
-            <CardTitle>Category Breakdown</CardTitle>
-            <CardDescription>Expense distribution for {monthNames[currentMonth]}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {categoryBreakdown.length === 0 ? (
-              <div className="flex h-[280px] items-center justify-center text-sm text-muted-foreground">
-                No expense data for this month
-              </div>
-            ) : (
-              <div className="h-[280px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={categoryBreakdown}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={55}
-                      outerRadius={85}
-                      paddingAngle={3}
-                      dataKey="total"
-                      nameKey="name"
-                    >
-                      {categoryBreakdown.map((entry, index) => (
-                        <Cell key={index} fill={entry.color || "#6366f1"} />
-                      ))}
-                    </Pie>
-                    <Tooltip
-                      contentStyle={{
-                        backgroundColor: "hsl(var(--popover))",
-                        border: "1px solid hsl(var(--border))",
-                        borderRadius: "var(--radius)",
-                        color: "hsl(var(--popover-foreground))",
-                      }}
-                      formatter={(value, name) => {
-                        const item = categoryBreakdown.find((c) => c.name === name)
-                        return [`${formatCurrency(Number(value))} (${item?.percentage ?? 0}%)`, name]
-                      }}
-                    />
-                    <Legend
-                      formatter={(value: string) => (
-                        <span className="text-xs text-muted-foreground">{value}</span>
-                      )}
-                    />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Monthly Trend Line */}
-        <Card className="bg-card/60 backdrop-blur-sm">
-          <CardHeader>
-            <CardTitle>Monthly Trend</CardTitle>
-            <CardDescription>Income vs expenses over the last 6 months</CardDescription>
-          </CardHeader>
-          <CardContent>
+      {/* Visual Analytics */}
+      <div className="grid gap-6 md:grid-cols-2">
+        
+        {/* Category Allocation Pie */}
+        <GlowCard className="p-6">
+          <div className="flex flex-col gap-1 pb-4">
+            <h3 className="text-sm font-semibold tracking-tight">Category Breakdown</h3>
+            <p className="text-[10px] text-muted-foreground">Expense distribution for selected monthly cycle</p>
+          </div>
+          {categoryBreakdown.length === 0 ? (
+            <div className="flex h-[280px] items-center justify-center text-xs text-muted-foreground font-medium">
+              No categories mapped to outbound flows.
+            </div>
+          ) : (
             <div className="h-[280px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={trendData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                  <XAxis
-                    dataKey="month"
-                    stroke="hsl(var(--muted-foreground))"
-                    fontSize={12}
-                    tickFormatter={(v) => {
-                      const [, m] = v.split("-")
-                      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-                      return months[parseInt(m) - 1] || v
-                    }}
-                  />
-                  <YAxis
-                    stroke="hsl(var(--muted-foreground))"
-                    fontSize={12}
-                    tickFormatter={(v) => `${(v / 1000000).toFixed(1)}M`}
-                  />
+                <PieChart>
+                  <Pie
+                    data={categoryBreakdown}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={55}
+                    outerRadius={80}
+                    paddingAngle={3}
+                    dataKey="total"
+                    nameKey="name"
+                  >
+                    {categoryBreakdown.map((entry, index) => (
+                      <Cell key={index} fill={entry.color || "var(--primary)"} />
+                    ))}
+                  </Pie>
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: "hsl(var(--popover))",
-                      border: "1px solid hsl(var(--border))",
+                      backgroundColor: "var(--popover)",
+                      border: "1px solid var(--border)",
                       borderRadius: "var(--radius)",
-                      color: "hsl(var(--popover-foreground))",
+                      fontSize: "11px",
                     }}
-                    formatter={(value) => [formatCurrency(Number(value ?? 0))]}
+                    formatter={(value, name) => {
+                      const item = categoryBreakdown.find((c) => c.name === name)
+                      return [`${formatCurrency(Number(value))} (${item?.percentage ?? 0}%)`, name]
+                    }}
                   />
-                  <Line
-                    type="monotone"
-                    dataKey="income"
-                    stroke="#10b981"
-                    strokeWidth={2}
-                    dot={{ fill: "#10b981", r: 4 }}
-                    name="Income"
+                  <Legend
+                    formatter={(value) => <span className="text-[10px] font-medium text-muted-foreground">{value}</span>}
                   />
-                  <Line
-                    type="monotone"
-                    dataKey="expense"
-                    stroke="#f43f5e"
-                    strokeWidth={2}
-                    dot={{ fill: "#f43f5e", r: 4 }}
-                    name="Expense"
-                  />
-                </LineChart>
+                </PieChart>
               </ResponsiveContainer>
             </div>
-          </CardContent>
-        </Card>
+          )}
+        </GlowCard>
+
+        {/* Six months trend area chart */}
+        <GlowCard className="p-6">
+          <div className="flex flex-col gap-1 pb-4">
+            <h3 className="text-sm font-semibold tracking-tight">Rolling Six-Month Trend</h3>
+            <p className="text-[10px] text-muted-foreground">Comparative overview of income and expenses</p>
+          </div>
+          <div className="h-[280px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={trendData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="colorInc" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.2}/>
+                    <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                  </linearGradient>
+                  <linearGradient id="colorExp" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.2}/>
+                    <stop offset="95%" stopColor="#f43f5e" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(99, 102, 241, 0.05)" vertical={false} />
+                <XAxis
+                  dataKey="month"
+                  stroke="currentColor"
+                  className="text-muted-foreground"
+                  fontSize={10}
+                  tickLine={false}
+                  axisLine={false}
+                  tickFormatter={(v) => {
+                    const [, m] = v.split("-")
+                    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+                    return months[parseInt(m) - 1] || v
+                  }}
+                />
+                <YAxis
+                  stroke="currentColor"
+                  className="text-muted-foreground"
+                  fontSize={10}
+                  tickLine={false}
+                  axisLine={false}
+                  tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "var(--popover)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "var(--radius)",
+                    fontSize: "11px",
+                  }}
+                  formatter={(value) => [formatCurrency(Number(value ?? 0))]}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="income"
+                  stroke="#10b981"
+                  strokeWidth={2}
+                  fillOpacity={1}
+                  fill="url(#colorInc)"
+                  name="Income"
+                />
+                <Area
+                  type="monotone"
+                  dataKey="expense"
+                  stroke="#f43f5e"
+                  strokeWidth={2}
+                  fillOpacity={1}
+                  fill="url(#colorExp)"
+                  name="Expense"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </GlowCard>
+
       </div>
 
       {/* Transaction List for Month */}
-      <Card className="bg-card/60 backdrop-blur-sm">
-        <CardHeader>
-          <CardTitle>Monthly Transactions</CardTitle>
-          <CardDescription>
-            All transactions for {monthNames[currentMonth]} {currentYear}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {transactions.length === 0 ? (
-            <div className="py-8 text-center text-sm text-muted-foreground">
-              No transactions this month
-            </div>
-          ) : (
-            <div className="divide-y divide-border/50">
-              {transactions.slice(0, 10).map((tx) => (
-                <div
-                  key={tx.id}
-                  className="flex items-center justify-between py-2.5"
-                >
-                  <div className="flex items-center gap-3">
-                    <div
-                      className="flex h-8 w-8 items-center justify-center rounded-lg text-sm"
-                      style={{ backgroundColor: `${tx.category.color}20` }}
-                    >
-                      {tx.category.icon}
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-foreground">
-                        {tx.description || tx.category.name}
-                      </p>
-                      <p className="text-xs text-muted-foreground">{formatDate(tx.date)}</p>
-                    </div>
+      <GlowCard className="p-6">
+        <div className="flex flex-col gap-1 pb-4 border-b border-border/20 mb-4">
+          <h3 className="text-sm font-semibold tracking-tight">Ledger Operations Ticker</h3>
+          <p className="text-[10px] text-muted-foreground">Transactions audit listing for current cycle</p>
+        </div>
+        {transactions.length === 0 ? (
+          <div className="py-12 text-center text-xs text-muted-foreground font-medium">
+            No transaction records located for selected cycle.
+          </div>
+        ) : (
+          <div className="divide-y divide-border/20 max-h-[300px] overflow-y-auto pr-1">
+            {transactions.map((tx) => (
+              <div key={tx.id} className="flex items-center justify-between py-3 hover:bg-secondary/10 rounded-xl px-2 transition-all">
+                <div className="flex items-center gap-3">
+                  <div
+                    className="flex h-8 w-8 items-center justify-center rounded-lg text-sm shadow-sm border border-border/30"
+                    style={{ backgroundColor: `${tx.category.color}15` }}
+                  >
+                    {tx.category.icon}
                   </div>
-                  <div className="text-right">
-                    <p
-                      className={`text-sm font-semibold ${
-                        tx.type === "INCOME" ? "text-emerald-400" : "text-rose-400"
-                      }`}
-                    >
-                      {tx.type === "INCOME" ? "+" : "-"}
-                      {formatCurrency(tx.amount)}
+                  <div>
+                    <p className="text-xs font-semibold text-foreground">
+                      {tx.description || tx.category.name}
                     </p>
+                    <p className="text-[9px] text-muted-foreground mt-0.5 font-medium">{formatDate(tx.date)}</p>
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+                <div className="text-right">
+                  <p
+                    className={`text-xs font-bold ${
+                      tx.type === "INCOME" ? "text-emerald-550" : "text-rose-550"
+                    }`}
+                  >
+                    {tx.type === "INCOME" ? "+" : "-"}
+                    {formatCurrency(tx.amount)}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </GlowCard>
+
+    </div>
+  )
+}
+
+function ReportsSkeleton() {
+  return (
+    <div className="space-y-8">
+      <div className="flex items-center justify-between">
+        <div>
+          <Skeleton className="h-8 w-36 rounded-xl" />
+          <Skeleton className="mt-2 h-4 w-60 rounded-lg" />
+        </div>
+        <Skeleton className="h-10 w-36 rounded-xl" />
+      </div>
+      <Skeleton className="h-16 w-full rounded-2xl" />
+      <div className="grid gap-6 md:grid-cols-3">
+        {[1, 2, 3].map((i) => (
+          <GlowCard key={i}>
+            <Skeleton className="h-5 w-24 rounded-lg" />
+            <Skeleton className="mt-4 h-8 w-36 rounded-xl" />
+          </GlowCard>
+        ))}
+      </div>
+      <div className="grid gap-6 md:grid-cols-2">
+        {[1, 2].map((i) => (
+          <GlowCard key={i}>
+            <Skeleton className="h-[280px] w-full rounded-2xl" />
+          </GlowCard>
+        ))}
+      </div>
     </div>
   )
 }

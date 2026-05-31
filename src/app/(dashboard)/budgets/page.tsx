@@ -10,15 +10,10 @@ import {
   AlertTriangle,
   AlertCircle,
   Target,
+  Sparkles,
 } from "lucide-react"
 import { toast } from "sonner"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card"
+import { GlowCard } from "@/components/ui/glow-card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -38,7 +33,6 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
 import { Label } from "@/components/ui/label"
 import { Skeleton } from "@/components/ui/skeleton"
 import { formatCurrency } from "../../../lib/utils"
@@ -200,63 +194,52 @@ export default function BudgetsPage() {
   }
 
   if (loading) {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <Skeleton className="h-8 w-32" />
-            <Skeleton className="mt-2 h-4 w-48" />
-          </div>
-          <Skeleton className="h-9 w-36" />
-        </div>
-        <div className="grid gap-4 md:grid-cols-2">
-          {[1, 2].map((i) => (
-            <Skeleton key={i} className="h-48 w-full" />
-          ))}
-        </div>
-      </div>
-    )
+    return <BudgetsSkeleton />
   }
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-center">
-        <AlertTriangle className="mb-4 h-12 w-12 text-red-400" />
-        <h2 className="text-xl font-semibold text-foreground">Failed to load budgets</h2>
-        <p className="mt-2 text-sm text-muted-foreground">{error}</p>
-        <Button className="mt-6" onClick={fetchBudgets}>
-          Try again
+      <div className="flex flex-col items-center justify-center py-24 text-center">
+        <AlertTriangle className="mb-4 h-12 w-12 text-red-500 animate-bounce" />
+        <h2 className="text-xl font-bold text-foreground">Sync Error</h2>
+        <p className="mt-2 text-sm text-muted-foreground max-w-sm">{error}</p>
+        <Button className="mt-6 px-5 py-2.5 rounded-xl font-semibold" onClick={fetchBudgets}>
+          Retry Sync
         </Button>
       </div>
     )
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-3 duration-300">
+      
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">Budgets</h1>
-          <p className="text-sm text-muted-foreground">Set spending limits and track your progress</p>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">Budget Thresholds</h1>
+          <p className="text-xs font-medium text-muted-foreground font-medium">Define strategic spending limits and target parameters</p>
         </div>
-        <Button onClick={openAddDialog}>
-          <Plus className="mr-1.5 h-4 w-4" />
+        <Button
+          onClick={openAddDialog}
+          className="rounded-xl px-4 py-2.5 bg-primary text-primary-foreground font-semibold hover:-translate-y-0.5 shadow-md shadow-primary/20 hover:shadow-primary/35 flex items-center gap-1.5 transition-all duration-200"
+        >
+          <Plus className="h-4 w-4" />
           Add Budget
         </Button>
       </div>
 
-      {/* Alerts */}
+      {/* Compliance / Budget warnings */}
       {overBudget.length > 0 && (
-        <div className="space-y-2">
+        <div className="space-y-3">
           {overBudget.map((b) => (
             <div
               key={`alert-over-${b.id}`}
-              className="flex items-center gap-3 rounded-lg border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-300"
+              className="flex items-center gap-3 rounded-2xl border border-rose-500/20 bg-rose-500/5 px-4 py-3 text-xs text-foreground shadow-sm"
             >
-              <AlertCircle className="h-5 w-5 shrink-0" />
-              <span>
-                <strong>{b.category.name}</strong> budget exceeded! Spent{" "}
-                {formatCurrency(b.spentAmount)} of {formatCurrency(b.amount)} ({b.percentage}%).
+              <AlertCircle className="h-5 w-5 text-rose-500 shrink-0" />
+              <span className="font-medium leading-relaxed">
+                <strong className="text-rose-500">{b.category.name}</strong> budget exceeded! Spent{" "}
+                <span className="font-bold text-rose-500">{formatCurrency(b.spentAmount)}</span> of {formatCurrency(b.amount)} ({b.percentage.toFixed(0)}%).
               </span>
             </div>
           ))}
@@ -264,164 +247,130 @@ export default function BudgetsPage() {
       )}
 
       {warningBudget.length > 0 && overBudget.length === 0 && (
-        <div className="space-y-2">
+        <div className="space-y-3">
           {warningBudget.map((b) => (
             <div
               key={`alert-warn-${b.id}`}
-              className="flex items-center gap-3 rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-300"
+              className="flex items-center gap-3 rounded-2xl border border-amber-500/20 bg-amber-500/5 px-4 py-3 text-xs text-foreground shadow-sm"
             >
-              <AlertTriangle className="h-5 w-5 shrink-0" />
-              <span>
-                <strong>{b.category.name}</strong> is at {b.percentage}% of budget.
+              <AlertTriangle className="h-5 w-5 text-amber-500 shrink-0" />
+              <span className="font-medium leading-relaxed">
+                <strong className="text-amber-500">{b.category.name}</strong> threshold is nearing capacity. Current spent:{" "}
+                <span className="font-bold text-amber-500">{b.percentage.toFixed(0)}%</span>.
               </span>
             </div>
           ))}
         </div>
       )}
 
-      {/* Budget Cards */}
+      {/* Budgets Grid */}
       {budgets.length === 0 ? (
-        <div className="flex flex-col items-center py-16 text-center">
-          <Target className="mb-3 h-12 w-12 text-muted-foreground" />
-          <h3 className="text-lg font-medium text-foreground">No budgets set</h3>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Create a budget to track your spending limits.
-          </p>
-          <Button className="mt-4" onClick={openAddDialog}>
+        <div className="flex flex-col items-center py-20 text-center">
+          <Target className="mb-4 h-12 w-12 text-muted-foreground animate-pulse" />
+          <h3 className="text-sm font-bold text-foreground">No limits active</h3>
+          <p className="text-xs text-muted-foreground mt-1 max-w-sm">Establish budget limits on specific categories to protect your margins.</p>
+          <Button className="mt-6 rounded-xl font-semibold" onClick={openAddDialog}>
             <Plus className="mr-1.5 h-4 w-4" />
-            Create Budget
+            Establish Limit
           </Button>
         </div>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-6 md:grid-cols-2">
           {budgets.map((budget) => {
             const isOver = budget.percentage > 100
             const isWarning = budget.percentage >= 80 && budget.percentage <= 100
             const progressColor = isOver
-              ? "#f43f5e"
+              ? "bg-rose-500"
               : isWarning
-                ? "#f59e0b"
-                : budget.category.color || "#6366f1"
+                ? "bg-amber-500"
+                : "bg-primary"
 
             return (
-              <Card
+              <GlowCard
                 key={budget.id}
-                className={`relative overflow-hidden border-0 bg-card/60 backdrop-blur-sm ring-1 transition-all ${
-                  isOver ? "ring-rose-500/40" : ""
-                }`}
+                glowColor={isOver ? "rgba(244, 63, 94, 0.12)" : isWarning ? "rgba(245, 158, 11, 0.12)" : `${budget.category.color}15`}
+                glowSize={300}
+                className="p-6 relative rounded-2xl"
+                style={{ borderColor: isOver ? "rgba(244, 63, 94, 0.2)" : `${budget.category.color}35` }}
               >
-                {/* Color accent */}
-                <div
-                  className="absolute left-0 top-0 h-full w-1"
-                  style={{ backgroundColor: budget.category.color }}
-                />
-
-                <CardHeader className="flex flex-row items-start justify-between pb-2 pl-5">
+                {/* Visual Category Header */}
+                <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
                     <div
-                      className="flex h-10 w-10 items-center justify-center rounded-xl text-lg"
-                      style={{ backgroundColor: `${budget.category.color}20` }}
+                      className="flex h-10 w-10 items-center justify-center rounded-xl text-lg shadow-sm border border-border/30"
+                      style={{ backgroundColor: `${budget.category.color}15`, color: budget.category.color }}
                     >
-                      <span>{budget.category.icon}</span>
+                      {budget.category.icon}
                     </div>
                     <div>
-                      <CardTitle className="text-base text-foreground">
-                        {budget.category.name}
-                      </CardTitle>
-                      <CardDescription className="flex items-center gap-1.5 text-xs capitalize">
-                        <Badge variant="secondary" className="text-[10px]">
-                          {budget.period}
-                        </Badge>
-                      </CardDescription>
+                      <h3 className="text-xs font-bold text-foreground leading-tight">{budget.category.name}</h3>
+                      <Badge className="bg-secondary/80 text-muted-foreground border border-border/60 text-[8px] font-extrabold uppercase py-0 px-1.5 mt-0.5 tracking-wider">
+                        {budget.period}
+                      </Badge>
                     </div>
                   </div>
-                  <div className="flex gap-0.5">
-                    <Button
-                      variant="ghost"
-                      size="icon-xs"
+                  
+                  <div className="flex gap-1">
+                    <button
                       onClick={() => openEditDialog(budget)}
+                      className="h-7 w-7 rounded-lg hover:bg-secondary border border-transparent hover:border-border/50 text-muted-foreground hover:text-foreground flex items-center justify-center transition-colors"
                     >
                       <Pencil className="h-3.5 w-3.5" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon-xs"
+                    </button>
+                    <button
                       onClick={() => handleDelete(budget.id)}
-                      className="text-red-400 hover:text-red-300"
+                      className="h-7 w-7 rounded-lg hover:bg-rose-500/10 text-muted-foreground hover:text-rose-500 flex items-center justify-center transition-colors border border-transparent hover:border-rose-500/20"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
-                    </Button>
+                    </button>
                   </div>
-                </CardHeader>
+                </div>
 
-                <CardContent className="pl-5">
-                  {/* Amount */}
-                  <div className="mb-3 space-y-1">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground">Budget</span>
-                      <span className="text-sm font-semibold text-foreground">
-                        {formatCurrency(budget.amount)}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground">Spent</span>
-                      <span
-                        className={`text-sm font-semibold ${
-                          isOver ? "text-rose-400" : "text-emerald-400"
-                        }`}
-                      >
-                        {formatCurrency(budget.spentAmount)}
-                      </span>
-                    </div>
+                {/* Spent metrics details */}
+                <div className="grid grid-cols-2 gap-4 mt-6 border-b border-border/10 pb-4 mb-4 text-xs font-semibold">
+                  <div>
+                    <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider">Assigned Envelope Cap</span>
+                    <p className="text-sm font-bold text-foreground mt-0.5">{formatCurrency(budget.amount)}</p>
                   </div>
+                  <div>
+                    <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider">Accumulated spent</span>
+                    <p className={isOver ? "text-rose-500 text-sm font-bold mt-0.5" : "text-emerald-500 text-sm font-bold mt-0.5"}>
+                      {formatCurrency(budget.spentAmount)}
+                    </p>
+                  </div>
+                </div>
 
-                  {/* Progress Bar */}
-                  <div className="space-y-1.5">
-                    <Progress
-                      value={Math.min(budget.percentage, 100)}
-                      color={progressColor}
-                      className="h-2.5"
+                {/* Progress bar container */}
+                <div className="space-y-1.5 text-xs font-semibold">
+                  <div className="h-2 w-full bg-secondary border border-border/20 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full ${progressColor} transition-all duration-500 ease-out`}
+                      style={{ width: `${Math.min(budget.percentage, 100)}%` }}
                     />
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-muted-foreground">Progress</span>
-                      <span
-                        className={`text-xs font-medium ${
-                          isOver
-                            ? "text-rose-400"
-                            : isWarning
-                              ? "text-amber-400"
-                              : "text-emerald-400"
-                        }`}
-                      >
-                        {budget.percentage}%
-                        {isOver && " (exceeded!)"}
-                      </span>
-                    </div>
                   </div>
+                  <div className="flex items-center justify-between text-[9px]">
+                    <span className="text-muted-foreground font-medium">Dynamic Envelope Space</span>
+                    <span className={isOver ? "text-rose-500 font-bold" : isWarning ? "text-amber-500 font-bold" : "text-emerald-500 font-bold"}>
+                      {budget.percentage.toFixed(0)}% used
+                      {isOver && " (Cap Exceeded!)"}
+                    </span>
+                  </div>
+                </div>
 
-                  {/* Remaining */}
-                  {!isOver && (
-                    <div className="mt-3 rounded-lg bg-muted/50 px-3 py-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs text-muted-foreground">Remaining</span>
-                        <span className="text-sm font-semibold text-emerald-400">
-                          {formatCurrency(budget.amount - budget.spentAmount)}
-                        </span>
-                      </div>
-                    </div>
-                  )}
-                  {isOver && (
-                    <div className="mt-3 rounded-lg bg-rose-500/10 px-3 py-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs text-rose-300">Overspent</span>
-                        <span className="text-sm font-semibold text-rose-400">
-                          {formatCurrency(budget.spentAmount - budget.amount)}
-                        </span>
-                      </div>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
+                {/* Remaining buffer alerts */}
+                {!isOver ? (
+                  <div className="mt-4 rounded-xl bg-emerald-500/5 border border-emerald-500/10 px-3.5 py-2 text-[10px] font-bold flex items-center justify-between">
+                    <span className="text-muted-foreground">Remaining Safe Margin</span>
+                    <span className="text-emerald-500">{formatCurrency(budget.amount - budget.spentAmount)}</span>
+                  </div>
+                ) : (
+                  <div className="mt-4 rounded-xl bg-rose-500/5 border border-rose-500/10 px-3.5 py-2 text-[10px] font-bold flex items-center justify-between">
+                    <span className="text-rose-500 font-bold">Deficit Margin</span>
+                    <span className="text-rose-500">{formatCurrency(budget.spentAmount - budget.amount)}</span>
+                  </div>
+                )}
+
+              </GlowCard>
             )
           })}
         </div>
@@ -429,30 +378,29 @@ export default function BudgetsPage() {
 
       {/* Add/Edit Budget Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md border border-border bg-popover text-foreground rounded-2xl shadow-premium-4 p-6 overflow-hidden">
           <DialogHeader>
-            <DialogTitle>{editingId ? "Edit Budget" : "Add Budget"}</DialogTitle>
-            <DialogDescription>
-              {editingId
-                ? "Update your budget limit."
-                : "Set a spending limit for a category."}
+            <DialogTitle className="text-sm font-bold tracking-tight uppercase tracking-widest flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-primary animate-pulse" />
+              {editingId ? "Modify Budget parameters" : "Establish Budget envelope"}
+            </DialogTitle>
+            <DialogDescription className="text-[10px] font-medium text-muted-foreground mt-1">
+              {editingId ? "Update selected budget cap parameters." : "Define category budget envelope limits."}
             </DialogDescription>
           </DialogHeader>
 
-          <div className="grid gap-4 py-2">
-            {/* Category */}
-            <div>
-              <Label>Category</Label>
+          <div className="grid gap-4 py-4 text-xs font-semibold">
+            {/* Category selection */}
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider">Category Selector</Label>
               <Select
                 value={form.categoryId}
-                onValueChange={(v) => {
-                  if (v) setForm({ ...form, categoryId: v })
-                }}
+                onValueChange={(v) => setForm({ ...form, categoryId: v || "" })}
               >
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="w-full h-10 rounded-xl bg-secondary/40 border-border/80 text-xs">
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="border-border bg-popover">
                   {categories.map((cat) => (
                     <SelectItem key={cat.id} value={cat.id}>
                       {cat.icon} {cat.name}
@@ -463,47 +411,77 @@ export default function BudgetsPage() {
             </div>
 
             {/* Amount */}
-            <div>
-              <Label htmlFor="budgetAmount">Budget Amount (IDR)</Label>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="budgetAmount" className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider">Budget Amount (IDR)</Label>
               <Input
                 id="budgetAmount"
                 type="number"
                 placeholder="0"
+                className="bg-secondary/40 border-border/80 rounded-xl h-10 px-3 font-bold"
                 value={form.amount}
                 onChange={(e) => setForm({ ...form, amount: e.target.value })}
               />
             </div>
 
             {/* Period */}
-            <div>
-              <Label>Period</Label>
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider">Budget Cycle Period</Label>
               <Select
                 value={form.period}
-                onValueChange={(v) => setForm({ ...form, period: (v as string) || "monthly" })}
+                onValueChange={(v) => setForm({ ...form, period: v || "monthly" })}
               >
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="w-full h-10 rounded-xl bg-secondary/40 border-border/80 text-xs">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="weekly">Weekly</SelectItem>
-                  <SelectItem value="monthly">Monthly</SelectItem>
-                  <SelectItem value="yearly">Yearly</SelectItem>
+                <SelectContent className="border-border bg-popover">
+                  <SelectItem value="weekly">Weekly Cycle</SelectItem>
+                  <SelectItem value="monthly">Monthly Cycle</SelectItem>
+                  <SelectItem value="yearly">Yearly Cycle</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
 
-          <DialogFooter>
-            <DialogClose render={<Button variant="outline" />}>
+          <DialogFooter className="gap-2.5">
+            <DialogClose render={<Button variant="outline" className="rounded-xl font-bold h-10" />}>
               Cancel
             </DialogClose>
-            <Button onClick={handleSubmit} disabled={submitting}>
+            <Button
+              onClick={handleSubmit}
+              disabled={submitting}
+              className="bg-primary text-primary-foreground font-semibold hover:-translate-y-0.5 rounded-xl h-10 px-5 transition-all shadow-md shadow-primary/20"
+            >
               {submitting && <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />}
-              {editingId ? "Update" : "Create"}
+              {editingId ? "Update Limits" : "Create Envelope"}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
+    </div>
+  )
+}
+
+function BudgetsSkeleton() {
+  return (
+    <div className="space-y-8">
+      <div className="flex items-center justify-between">
+        <div>
+          <Skeleton className="h-8 w-36 rounded-xl" />
+          <Skeleton className="mt-2 h-4 w-60 rounded-lg" />
+        </div>
+        <Skeleton className="h-10 w-36 rounded-xl" />
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-2">
+        {[1, 2].map((i) => (
+          <GlowCard key={i} className="min-h-[220px]">
+            <Skeleton className="h-6 w-24 rounded-lg" />
+            <Skeleton className="mt-6 h-4 w-40 rounded" />
+            <Skeleton className="mt-6 h-3.5 w-full rounded" />
+            <Skeleton className="mt-4 h-8 w-full rounded-xl" />
+          </GlowCard>
+        ))}
+      </div>
     </div>
   )
 }

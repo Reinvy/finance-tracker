@@ -1,13 +1,12 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter, usePathname } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { Plus, Wallet, PiggyBank, ArrowUpDown, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 export function QuickActionFAB() {
   const router = useRouter()
-  const pathname = usePathname()
   const [isOpen, setIsOpen] = useState(false)
 
   const actions = [
@@ -15,19 +14,19 @@ export function QuickActionFAB() {
       label: "Add Transaction",
       icon: ArrowUpDown,
       route: "/transactions?action=add-transaction",
-      color: "bg-zinc-900 text-zinc-100 hover:text-white border-zinc-800",
+      color: "bg-card border-border/80 text-foreground hover:bg-secondary",
     },
     {
-      label: "Add Wallet",
+      label: "Connect Wallet",
       icon: Wallet,
       route: "/wallets?action=add-wallet",
-      color: "bg-zinc-900 text-zinc-100 hover:text-white border-zinc-800",
+      color: "bg-card border-border/80 text-foreground hover:bg-secondary",
     },
     {
-      label: "Add Budget",
+      label: "Establish Budget",
       icon: PiggyBank,
       route: "/budgets?action=add-budget",
-      color: "bg-zinc-900 text-zinc-100 hover:text-white border-zinc-800",
+      color: "bg-card border-border/80 text-foreground hover:bg-secondary",
     },
   ]
 
@@ -50,17 +49,17 @@ export function QuickActionFAB() {
           return (
             <div
               key={index}
-              className="flex items-center gap-2 group cursor-pointer"
+              className="flex items-center gap-2.5 group cursor-pointer"
               onClick={() => handleActionClick(act.route)}
             >
               {/* Action Label */}
-              <span className="rounded-lg bg-zinc-950/90 border border-zinc-800 px-2.5 py-1 text-xs font-semibold text-zinc-300 shadow-md transition-all group-hover:text-white group-hover:border-zinc-700">
+              <span className="rounded-xl border border-border/80 bg-popover/90 backdrop-blur-md px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground shadow-sm transition-all group-hover:text-foreground group-hover:border-border">
                 {act.label}
               </span>
               {/* Action Button */}
               <button
                 className={cn(
-                  "flex h-10 w-10 items-center justify-center rounded-xl border shadow-lg transition-all active:scale-95 duration-200",
+                  "flex h-10 w-10 items-center justify-center rounded-xl border shadow-md transition-all active:scale-95 duration-200",
                   act.color
                 )}
               >
@@ -75,17 +74,17 @@ export function QuickActionFAB() {
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          "relative flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-zinc-100 via-zinc-200 to-zinc-350 shadow-2xl text-zinc-950 transition-all duration-300 hover:scale-105 active:scale-95 ring-4 ring-zinc-900/30",
+          "relative flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 via-indigo-650 to-primary shadow-premium-4 text-white transition-all duration-300 hover:scale-105 active:scale-95 ring-4 ring-primary/20",
           isOpen ? "rotate-45" : ""
         )}
       >
         {isOpen ? (
-          <X className="h-6 w-6 text-zinc-950 transition-all duration-300" />
+          <X className="h-5 w-5 text-white transition-all duration-300" />
         ) : (
           <>
             {/* Pulsing ring animation */}
-            <span className="absolute inset-0 rounded-full bg-white/20 animate-ping pointer-events-none" />
-            <Plus className="h-6 w-6 text-zinc-950 transition-all duration-300" />
+            <span className="absolute inset-0 rounded-full bg-indigo-500/20 animate-ping pointer-events-none" />
+            <Plus className="h-5 w-5 text-white transition-all duration-300" />
           </>
         )}
       </button>

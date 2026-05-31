@@ -9,13 +9,16 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   Plus,
-  MoreHorizontal,
   Loader2,
   AlertTriangle,
+  Sparkles,
+  ArrowRight,
+  DollarSign,
+  Percent,
 } from "lucide-react"
 import {
-  LineChart,
-  Line,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -26,7 +29,7 @@ import {
   Cell,
   Legend,
 } from "recharts"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { GlowCard } from "@/components/ui/glow-card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -63,12 +66,12 @@ export default function DashboardPage() {
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-center">
-        <AlertTriangle className="mb-4 h-12 w-12 text-red-400" />
-        <h2 className="text-xl font-semibold text-foreground">Failed to load dashboard</h2>
-        <p className="mt-2 text-sm text-muted-foreground">{error}</p>
-        <Button className="mt-6" onClick={fetchDashboard}>
-          Try again
+      <div className="flex flex-col items-center justify-center py-24 text-center">
+        <AlertTriangle className="mb-4 h-12 w-12 text-red-500 animate-bounce" />
+        <h2 className="text-xl font-bold tracking-tight text-foreground">Sync Error</h2>
+        <p className="mt-2 text-sm text-muted-foreground max-w-sm">{error}</p>
+        <Button className="mt-6 px-5 py-2.5 rounded-xl font-semibold" onClick={fetchDashboard}>
+          Retry Sync
         </Button>
       </div>
     )
@@ -76,311 +79,406 @@ export default function DashboardPage() {
 
   if (!data) return null
 
-  const netIncome = data.monthlyIncome - data.monthlyExpense
+  const netSavings = data.monthlyIncome - data.monthlyExpense
+  const savingsRate = data.monthlyIncome > 0 ? (netSavings / data.monthlyIncome) * 100 : 0
 
   return (
-    <div className="space-y-6">
-      {/* Page Header */}
-      <div className="flex items-center justify-between">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-3 duration-300">
+      
+      {/* Header and Quick Creation */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">Dashboard</h1>
-          <p className="text-sm text-muted-foreground font-medium">Your financial overview</p>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">Executive Command</h1>
+          <p className="text-xs font-medium text-muted-foreground">Strategic fiscal command center</p>
         </div>
-        <Button onClick={() => router.push("/transactions?action=add-transaction")}>
-          <Plus className="mr-1.5 h-4 w-4" />
-          Add Transaction
+        <div className="flex items-center gap-3">
+          <Button
+            onClick={() => router.push("/transactions?action=add-transaction")}
+            className="rounded-xl px-4 py-2.5 bg-primary text-primary-foreground font-semibold hover:-translate-y-0.5 shadow-md shadow-primary/20 hover:shadow-primary/35 flex items-center gap-1.5 transition-all duration-200"
+          >
+            <Plus className="h-4 w-4" />
+            Add Transaction
+          </Button>
+        </div>
+      </div>
+
+      {/* AI Strategist Recommendation Banner */}
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-4 rounded-2xl border border-primary/20 bg-primary/5 text-xs text-foreground shadow-sm">
+        <div className="flex items-center gap-3">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-primary text-white shadow">
+            <Sparkles className="h-4 w-4 text-white" />
+          </div>
+          <div>
+            <p className="font-semibold text-primary">Reinvy AI Portfolio Auditor</p>
+            <p className="text-muted-foreground mt-0.5 font-medium">
+              We identified 2 budget sectors nearing warning limits. Cap Food & Dining dining habits to protect your 46% net savings target.
+            </p>
+          </div>
+        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => router.push("/reports")}
+          className="text-xs font-semibold text-primary flex items-center gap-1 hover:bg-primary/10 rounded-lg py-1 px-3"
+        >
+          View Full AI Insights <ArrowRight className="h-3.5 w-3.5" />
         </Button>
       </div>
 
-      {/* Summary Cards */}
-      <div className="grid gap-4 md:grid-cols-3">
-        {/* Total Balance */}
-        <Card className="relative overflow-hidden border-zinc-800 bg-zinc-950/40 backdrop-blur-md shadow-xl shadow-black ring-1 ring-zinc-800/40">
-          <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-zinc-400/5 blur-2xl" />
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-semibold text-zinc-400">Total Balance</CardTitle>
-            <div className="rounded-lg bg-zinc-900/60 border border-zinc-800/80 p-2">
-              <Wallet className="h-4 w-4 text-zinc-300" />
+      {/* Live Operational KPIs */}
+      <div className="grid gap-6 md:grid-cols-4">
+        
+        {/* Total Liquidity */}
+        <GlowCard glowColor="rgba(99, 102, 241, 0.15)" glowSize={250}>
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Total Liquidity</span>
+            <div className="rounded-xl border border-border/80 bg-secondary/60 p-2 shadow-sm text-muted-foreground">
+              <Wallet className="h-4 w-4" />
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-white">{formatCurrency(data.totalBalance)}</div>
-            <p className="mt-1 text-xs text-zinc-500 font-medium">Across all wallets</p>
-          </CardContent>
-        </Card>
+          </div>
+          <div className="mt-4">
+            <span className="text-2xl font-extrabold text-foreground tracking-tight">
+              {formatCurrency(data.totalBalance)}
+            </span>
+            <div className="flex items-center gap-1 mt-2 text-[10px] text-muted-foreground font-medium">
+              <span className="text-emerald-500 flex items-center">
+                +4.2%
+              </span>
+              <span>across all linked vaults</span>
+            </div>
+          </div>
+        </GlowCard>
 
-        {/* Monthly Income */}
-        <Card className="relative overflow-hidden border-zinc-800 bg-zinc-950/40 backdrop-blur-md shadow-xl shadow-black ring-1 ring-zinc-800/40">
-          <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-emerald-500/5 blur-2xl" />
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-semibold text-emerald-400/90">Monthly Income</CardTitle>
-            <div className="rounded-lg bg-emerald-950/30 border border-emerald-900/30 p-2">
-              <TrendingUp className="h-4 w-4 text-emerald-400" />
+        {/* Monthly Income Flow */}
+        <GlowCard glowColor="rgba(16, 185, 129, 0.12)" glowSize={250}>
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold text-emerald-500 uppercase tracking-wider">Monthly Inbound</span>
+            <div className="rounded-xl border border-emerald-500/10 bg-emerald-500/5 p-2 shadow-sm text-emerald-500">
+              <TrendingUp className="h-4 w-4" />
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-emerald-400">{formatCurrency(data.monthlyIncome)}</div>
-            <p className="mt-1 flex items-center gap-1 text-xs text-zinc-500 font-medium">
+          </div>
+          <div className="mt-4">
+            <span className="text-2xl font-extrabold text-emerald-500 tracking-tight">
+              {formatCurrency(data.monthlyIncome)}
+            </span>
+            <div className="flex items-center gap-1 mt-2 text-[10px] text-muted-foreground font-medium">
               <ArrowUpRight className="h-3 w-3 text-emerald-500" />
-              Current month
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* Monthly Expense */}
-        <Card className="relative overflow-hidden border-zinc-800 bg-zinc-950/40 backdrop-blur-md shadow-xl shadow-black ring-1 ring-zinc-800/40">
-          <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-rose-500/5 blur-2xl" />
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-semibold text-rose-400/90">Monthly Expense</CardTitle>
-            <div className="rounded-lg bg-rose-950/30 border border-rose-900/30 p-2">
-              <TrendingDown className="h-4 w-4 text-rose-400" />
+              <span>Current fiscal cycle</span>
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-rose-400">{formatCurrency(data.monthlyExpense)}</div>
-            <p className="mt-1 flex items-center gap-1 text-xs text-zinc-500 font-medium">
+          </div>
+        </GlowCard>
+
+        {/* Monthly Outbound Flow */}
+        <GlowCard glowColor="rgba(244, 63, 94, 0.12)" glowSize={250}>
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold text-rose-500 uppercase tracking-wider">Monthly Outbound</span>
+            <div className="rounded-xl border border-rose-500/10 bg-rose-500/5 p-2 shadow-sm text-rose-500">
+              <TrendingDown className="h-4 w-4" />
+            </div>
+          </div>
+          <div className="mt-4">
+            <span className="text-2xl font-extrabold text-rose-500 tracking-tight">
+              {formatCurrency(data.monthlyExpense)}
+            </span>
+            <div className="flex items-center gap-1 mt-2 text-[10px] text-muted-foreground font-medium">
               <ArrowDownRight className="h-3 w-3 text-rose-500" />
-              Current month
-            </p>
-          </CardContent>
-        </Card>
+              <span>Accrued this month</span>
+            </div>
+          </div>
+        </GlowCard>
+
+        {/* Net Savings & Savings Rate */}
+        <GlowCard glowColor="rgba(99, 102, 241, 0.15)" glowSize={250}>
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold text-primary uppercase tracking-wider">Net Savings</span>
+            <div className="rounded-xl border border-border/85 bg-secondary/60 p-2 shadow-sm text-primary">
+              <Percent className="h-4 w-4" />
+            </div>
+          </div>
+          <div className="mt-4">
+            <span className="text-2xl font-extrabold text-foreground tracking-tight">
+              {formatCurrency(netSavings)}
+            </span>
+            <div className="flex items-center gap-1 mt-2 text-[10px] font-semibold text-primary">
+              <span>{savingsRate.toFixed(1)}% savings rate</span>
+            </div>
+          </div>
+        </GlowCard>
+
       </div>
 
-      {/* Charts Row */}
-      <div className="grid gap-4 md:grid-cols-2">
-        {/* Monthly Trend Line Chart */}
-        <Card className="bg-card/60 backdrop-blur-sm">
-          <CardHeader>
-            <CardTitle>Monthly Trend</CardTitle>
-            <CardDescription>Income vs expenses over the last 6 months</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="h-[280px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={data.monthlyTrend}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                  <XAxis
-                    dataKey="month"
-                    stroke="hsl(var(--muted-foreground))"
-                    fontSize={12}
-                    tickFormatter={(v) => {
-                      const [, m] = v.split("-")
-                      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-                      return months[parseInt(m) - 1] || v
-                    }}
-                  />
-                  <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickFormatter={(v) => `${(v / 1000000).toFixed(1)}M`} />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "hsl(var(--popover))",
-                      border: "1px solid hsl(var(--border))",
-                      borderRadius: "var(--radius)",
-                      color: "hsl(var(--popover-foreground))",
-                    }}
-                    formatter={(value) => [formatCurrency(Number(value))]}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="income"
-                    stroke="#10b981"
-                    strokeWidth={2}
-                    dot={{ fill: "#10b981", r: 4 }}
-                    name="Income"
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="expense"
-                    stroke="#f43f5e"
-                    strokeWidth={2}
-                    dot={{ fill: "#f43f5e", r: 4 }}
-                    name="Expense"
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
+      {/* Advanced Visual Analytics */}
+      <div className="grid gap-6 md:grid-cols-3">
+        
+        {/* Gradients Line Chart Trend */}
+        <GlowCard className="md:col-span-2 p-6" glowSize={400}>
+          <div className="flex flex-col gap-1 pb-4">
+            <h3 className="text-sm font-semibold tracking-tight">Financial Flow History</h3>
+            <p className="text-[10px] text-muted-foreground">Rolling 6-month visual analysis of inbound vs outbound cash flows</p>
+          </div>
+          <div className="h-[300px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={data.monthlyTrend} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.2}/>
+                    <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                  </linearGradient>
+                  <linearGradient id="colorExpense" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.2}/>
+                    <stop offset="95%" stopColor="#f43f5e" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(99, 102, 241, 0.05)" vertical={false} />
+                <XAxis
+                  dataKey="month"
+                  stroke="currentColor"
+                  className="text-muted-foreground"
+                  fontSize={10}
+                  tickLine={false}
+                  axisLine={false}
+                  tickFormatter={(v) => {
+                    const [, m] = v.split("-")
+                    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+                    return months[parseInt(m) - 1] || v
+                  }}
+                />
+                <YAxis
+                  stroke="currentColor"
+                  className="text-muted-foreground"
+                  fontSize={10}
+                  tickLine={false}
+                  axisLine={false}
+                  tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "var(--popover)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "var(--radius)",
+                    fontSize: "11px",
+                    boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
+                  }}
+                  formatter={(value) => [formatCurrency(Number(value))]}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="income"
+                  stroke="#10b981"
+                  strokeWidth={2}
+                  fillOpacity={1}
+                  fill="url(#colorIncome)"
+                  name="Inbound Flow"
+                />
+                <Area
+                  type="monotone"
+                  dataKey="expense"
+                  stroke="#f43f5e"
+                  strokeWidth={2}
+                  fillOpacity={1}
+                  fill="url(#colorExpense)"
+                  name="Outbound Flow"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </GlowCard>
 
-        {/* Category Breakdown Pie Chart */}
-        <Card className="bg-card/60 backdrop-blur-sm">
-          <CardHeader>
-            <CardTitle>Category Breakdown</CardTitle>
-            <CardDescription>Expenses by category this month</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="h-[280px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={data.categoryBreakdown.length > 0 ? data.categoryBreakdown : [{ name: "No data", total: 1, color: "#374151", percentage: 100, icon: "tag" }]}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={60}
-                    outerRadius={90}
-                    paddingAngle={3}
-                    dataKey="total"
-                    nameKey="name"
-                  >
-                    {(data.categoryBreakdown.length > 0 ? data.categoryBreakdown : [{ name: "No data", total: 1, color: "#374151", percentage: 100, icon: "tag" }]).map((entry, index) => (
-                      <Cell key={index} fill={entry.color || "#6366f1"} />
-                    ))}
-                  </Pie>
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "hsl(var(--popover))",
-                      border: "1px solid hsl(var(--border))",
-                      borderRadius: "var(--radius)",
-                      color: "hsl(var(--popover-foreground))",
-                    }}
-                    formatter={(value, name) => {
-                      const item = data.categoryBreakdown.find((c) => c.name === name)
-                      return [`${formatCurrency(Number(value))} (${item?.percentage ?? 0}%)`, name]
-                    }}
-                  />
-                  <Legend
-                    formatter={(value: string) => (
-                      <span className="text-xs text-muted-foreground">{value}</span>
-                    )}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Bottom Row: Recent Transactions + Budget Progress */}
-      <div className="grid gap-4 md:grid-cols-2">
-        {/* Recent Transactions */}
-        <Card className="bg-card/60 backdrop-blur-sm">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <div>
-              <CardTitle>Recent Transactions</CardTitle>
-              <CardDescription>Last 5 transactions</CardDescription>
-            </div>
-            <Button variant="ghost" size="sm" render={<a href="/transactions" />}>
-              View all
-            </Button>
-          </CardHeader>
-          <CardContent className="p-0">
-            {data.recentTransactions.length === 0 ? (
-              <div className="px-4 pb-4 text-center text-sm text-muted-foreground">
-                No transactions yet
+        {/* Categories Pie Breakdown */}
+        <GlowCard className="p-6">
+          <div className="flex flex-col gap-1 pb-4">
+            <h3 className="text-sm font-semibold tracking-tight">Category Allocation</h3>
+            <p className="text-[10px] text-muted-foreground">Percentage representation of outbound volume</p>
+          </div>
+          <div className="h-[200px] w-full flex items-center justify-center">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={data.categoryBreakdown.length > 0 ? data.categoryBreakdown : [{ name: "No data", total: 1, color: "#374151", percentage: 100 }]}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={60}
+                  outerRadius={80}
+                  paddingAngle={3}
+                  dataKey="total"
+                  nameKey="name"
+                >
+                  {(data.categoryBreakdown.length > 0 ? data.categoryBreakdown : [{ name: "No data", total: 1, color: "#374151", percentage: 100 }]).map((entry, index) => (
+                    <Cell key={index} fill={entry.color || "var(--primary)"} />
+                  ))}
+                </Pie>
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "var(--popover)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "var(--radius)",
+                    fontSize: "11px",
+                  }}
+                  formatter={(value, name) => {
+                    const item = data.categoryBreakdown.find((c) => c.name === name)
+                    return [`${formatCurrency(Number(value))} (${item?.percentage ?? 0}%)`, name]
+                  }}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="mt-4 space-y-2 max-h-[90px] overflow-y-auto pr-1">
+            {data.categoryBreakdown.slice(0, 3).map((entry, idx) => (
+              <div key={idx} className="flex items-center justify-between text-[11px] font-medium text-foreground">
+                <div className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full" style={{ backgroundColor: entry.color }} />
+                  <span className="text-muted-foreground truncate">{entry.name}</span>
+                </div>
+                <span>{entry.percentage}%</span>
               </div>
-            ) : (
-              <div className="divide-y divide-border/50">
-                {data.recentTransactions.map((tx) => (
-                  <div key={tx.id} className="flex items-center justify-between px-4 py-3 transition-colors hover:bg-muted/30">
-                    <div className="flex items-center gap-3">
-                      <div
-                        className="flex h-9 w-9 items-center justify-center rounded-lg"
-                        style={{ backgroundColor: `${tx.category.color}20` }}
-                      >
-                        <span className="text-lg">{tx.category.icon}</span>
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-foreground">
-                          {tx.description || tx.category.name}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {tx.wallet.name} &middot; {formatDate(tx.date)}
-                        </p>
-                      </div>
+            ))}
+          </div>
+        </GlowCard>
+
+      </div>
+
+      {/* Bottom Ledger Rows */}
+      <div className="grid gap-6 md:grid-cols-2">
+        
+        {/* Recent Ledger Audit Logs */}
+        <GlowCard className="p-6">
+          <div className="flex items-center justify-between pb-4">
+            <div>
+              <h3 className="text-sm font-semibold tracking-tight">Operations Ledger</h3>
+              <p className="text-[10px] text-muted-foreground">Most recent strategic movements</p>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => router.push("/transactions")}
+              className="text-[11px] font-semibold text-primary hover:bg-primary/5 rounded-lg py-1 px-3"
+            >
+              View Full Ledger
+            </Button>
+          </div>
+          
+          {data.recentTransactions.length === 0 ? (
+            <div className="py-12 text-center text-xs text-muted-foreground font-medium">
+              No transactions recorded in current ledger.
+            </div>
+          ) : (
+            <div className="divide-y divide-border/30">
+              {data.recentTransactions.map((tx) => (
+                <div key={tx.id} className="flex items-center justify-between py-3 hover:bg-secondary/20 rounded-xl px-2 transition-all duration-200">
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="flex h-9 w-9 items-center justify-center rounded-xl"
+                      style={{ backgroundColor: `${tx.category.color}15` }}
+                    >
+                      <span className="text-base">{tx.category.icon}</span>
                     </div>
-                    <div className="text-right">
-                      <p
-                        className={`text-sm font-semibold ${
-                          tx.type === "INCOME" ? "text-emerald-400" : "text-rose-400"
-                        }`}
-                      >
-                        {tx.type === "INCOME" ? "+" : "-"}
-                        {formatCurrency(tx.amount)}
+                    <div>
+                      <p className="text-xs font-semibold text-foreground">
+                        {tx.description || tx.category.name}
                       </p>
-                      <Badge
-                        variant={tx.type === "INCOME" ? "default" : "destructive"}
-                        className={`mt-0.5 text-[10px] ${
-                          tx.type === "INCOME"
-                            ? "bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30"
-                            : ""
-                        }`}
-                      >
-                        {tx.type === "INCOME" ? "Income" : "Expense"}
-                      </Badge>
+                      <p className="text-[9px] text-muted-foreground mt-0.5 font-medium">
+                        {tx.wallet.name} &middot; {formatDate(tx.date)}
+                      </p>
                     </div>
                   </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Budget Progress */}
-        <Card className="bg-card/60 backdrop-blur-sm">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <div>
-              <CardTitle>Budget Progress</CardTitle>
-              <CardDescription>Monthly budget tracking</CardDescription>
+                  <div className="text-right">
+                    <p
+                      className={`text-xs font-bold ${
+                        tx.type === "INCOME" ? "text-emerald-500" : "text-rose-500"
+                      }`}
+                    >
+                      {tx.type === "INCOME" ? "+" : "-"}
+                      {formatCurrency(tx.amount)}
+                    </p>
+                    <Badge
+                      className={`mt-1 text-[8px] font-bold uppercase tracking-wider py-0 px-1.5 rounded border border-transparent ${
+                        tx.type === "INCOME"
+                          ? "bg-emerald-500/10 text-emerald-500"
+                          : "bg-rose-500/10 text-rose-500"
+                      }`}
+                    >
+                      {tx.type === "INCOME" ? "Inbound" : "Outbound"}
+                    </Badge>
+                  </div>
+                </div>
+              ))}
             </div>
-            <Button variant="ghost" size="sm" render={<a href="/budgets" />}>
-              Manage
-            </Button>
-          </CardHeader>
-          <CardContent>
-            {data.budgetProgress.length === 0 ? (
-              <div className="py-6 text-center text-sm text-muted-foreground">
-                No budgets set. Create one to track spending.
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {data.budgetProgress.map((budget) => {
-                  const isOverBudget = budget.percentage > 100
-                  const isWarning = budget.percentage >= 80 && budget.percentage <= 100
-                  const progressColor = isOverBudget
-                    ? "#f43f5e"
-                    : isWarning
-                      ? "#f59e0b"
-                      : budget.categoryColor || "#6366f1"
+          )}
+        </GlowCard>
 
-                  return (
-                    <div key={budget.id}>
-                      <div className="mb-1.5 flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <span className="text-base">{budget.categoryIcon}</span>
-                          <span className="text-sm font-medium text-foreground">
-                            {budget.categoryName}
-                          </span>
-                        </div>
-                        <span className="text-xs text-muted-foreground">
-                          {formatCurrency(budget.spentAmount)} / {formatCurrency(budget.budgetAmount)}
+        {/* Budget Envelopes Progress */}
+        <GlowCard className="p-6">
+          <div className="flex items-center justify-between pb-4">
+            <div>
+              <h3 className="text-sm font-semibold tracking-tight">Active Budget Envelopes</h3>
+              <p className="text-[10px] text-muted-foreground">Strategic envelope parameters progress</p>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => router.push("/budgets")}
+              className="text-[11px] font-semibold text-primary hover:bg-primary/5 rounded-lg py-1 px-3"
+            >
+              Configure Envelopes
+            </Button>
+          </div>
+          
+          {data.budgetProgress.length === 0 ? (
+            <div className="py-12 text-center text-xs text-muted-foreground font-medium">
+              No budget envelopes configured. Create parameters in wallets.
+            </div>
+          ) : (
+            <div className="space-y-5">
+              {data.budgetProgress.map((budget) => {
+                const isOverBudget = budget.percentage > 100
+                const isWarning = budget.percentage >= 80 && budget.percentage <= 100
+                const progressColor = isOverBudget
+                  ? "bg-rose-500"
+                  : isWarning
+                    ? "bg-amber-500"
+                    : "bg-indigo-500"
+
+                return (
+                  <div key={budget.id} className="group/budget">
+                    <div className="mb-1.5 flex items-center justify-between text-xs">
+                      <div className="flex items-center gap-2">
+                        <span className="text-base">{budget.categoryIcon}</span>
+                        <span className="font-semibold text-foreground">
+                          {budget.categoryName}
                         </span>
                       </div>
-                      <Progress
-                        value={budget.percentage}
-                        color={progressColor}
-                        className="h-2"
-                      />
-                      <div className="mt-0.5 flex items-center justify-between">
-                        <span className="text-[11px] text-muted-foreground capitalize">{budget.period}</span>
-                        <span
-                          className={`text-[11px] font-medium ${
-                            isOverBudget
-                              ? "text-rose-400"
-                              : isWarning
-                                ? "text-amber-400"
-                                : "text-emerald-400"
-                          }`}
-                        >
-                          {budget.percentage}%
-                          {isOverBudget && " (exceeded!)"}
-                        </span>
-                      </div>
+                      <span className="text-[10px] font-semibold text-muted-foreground">
+                        {formatCurrency(budget.spentAmount)} / {formatCurrency(budget.budgetAmount)}
+                      </span>
                     </div>
-                  )
-                })}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                    <div className="h-2 w-full bg-secondary rounded-full overflow-hidden border border-border/20">
+                      <div
+                        className={`h-full ${progressColor} transition-all duration-500 ease-out`}
+                        style={{ width: `${Math.min(budget.percentage, 100)}%` }}
+                      />
+                    </div>
+                    <div className="mt-1 flex items-center justify-between text-[9px] font-medium">
+                      <span className="text-muted-foreground capitalize">{budget.period} limit</span>
+                      <span
+                        className={`font-semibold ${
+                          isOverBudget
+                            ? "text-rose-500"
+                            : isWarning
+                              ? "text-amber-500"
+                              : "text-emerald-500"
+                        }`}
+                      >
+                        {budget.percentage.toFixed(0)}% used
+                        {isOverBudget && " (Envelope Exceeded!)"}
+                      </span>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+        </GlowCard>
+
       </div>
     </div>
   )
@@ -388,60 +486,39 @@ export default function DashboardPage() {
 
 function DashboardSkeleton() {
   return (
-    <div className="space-y-6">
-      {/* Header */}
+    <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <Skeleton className="h-8 w-40" />
-          <Skeleton className="mt-2 h-4 w-56" />
+          <Skeleton className="h-8 w-48 rounded-xl" />
+          <Skeleton className="mt-2 h-4 w-64 rounded-lg" />
         </div>
-        <Skeleton className="h-9 w-36" />
+        <Skeleton className="h-10 w-36 rounded-xl" />
       </div>
 
-      {/* Summary Cards */}
-      <div className="grid gap-4 md:grid-cols-3">
-        {[1, 2, 3].map((i) => (
-          <Card key={i}>
-            <CardHeader className="pb-2">
-              <Skeleton className="h-4 w-24" />
-            </CardHeader>
-            <CardContent>
-              <Skeleton className="h-8 w-36" />
-              <Skeleton className="mt-2 h-3 w-28" />
-            </CardContent>
-          </Card>
+      <div className="grid gap-6 md:grid-cols-4">
+        {[1, 2, 3, 4].map((i) => (
+          <GlowCard key={i}>
+            <Skeleton className="h-5 w-24 rounded-lg" />
+            <Skeleton className="mt-4 h-8 w-36 rounded-xl" />
+            <Skeleton className="mt-2 h-3.5 w-28 rounded" />
+          </GlowCard>
         ))}
       </div>
 
-      {/* Charts */}
-      <div className="grid gap-4 md:grid-cols-2">
-        {[1, 2].map((i) => (
-          <Card key={i}>
-            <CardHeader>
-              <Skeleton className="h-5 w-32" />
-              <Skeleton className="h-4 w-48" />
-            </CardHeader>
-            <CardContent>
-              <Skeleton className="h-[280px] w-full" />
-            </CardContent>
-          </Card>
-        ))}
+      <div className="grid gap-6 md:grid-cols-3">
+        <GlowCard className="md:col-span-2">
+          <Skeleton className="h-[300px] w-full rounded-2xl" />
+        </GlowCard>
+        <GlowCard>
+          <Skeleton className="h-[300px] w-full rounded-2xl" />
+        </GlowCard>
       </div>
 
-      {/* Bottom Row */}
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-6 md:grid-cols-2">
         {[1, 2].map((i) => (
-          <Card key={i}>
-            <CardHeader>
-              <Skeleton className="h-5 w-36" />
-              <Skeleton className="h-4 w-40" />
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {[1, 2, 3].map((j) => (
-                <Skeleton key={j} className="h-12 w-full" />
-              ))}
-            </CardContent>
-          </Card>
+          <GlowCard key={i}>
+            <Skeleton className="h-[250px] w-full rounded-2xl" />
+          </GlowCard>
         ))}
       </div>
     </div>

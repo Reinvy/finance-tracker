@@ -8,15 +8,10 @@ import {
   Loader2,
   AlertTriangle,
   Tag,
+  Sparkles,
 } from "lucide-react"
 import { toast } from "sonner"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card"
+import { GlowCard } from "@/components/ui/glow-card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -75,16 +70,16 @@ const ICON_OPTIONS = [
   { value: "health", label: "🏥 Health" },
   { value: "education", label: "📚 Education" },
   { value: "entertainment", label: "🎬 Entertainment" },
-  { value: "shopping-bag", label: "🛍️ Shopping" },
-  { value: "coffee", label: "☕ Coffee" },
-  { value: "gym", label: "💪 Fitness" },
+  { value: "shopping-bag", label: "🛍️ Retail" },
+  { value: "coffee", label: "☕ Beverage" },
+  { value: "gym", label: "💪 Wellness" },
   { value: "plane", label: "✈️ Travel" },
   { value: "gift", label: "🎁 Gift" },
   { value: "salary", label: "💰 Salary" },
-  { value: "investment", label: "📈 Investment" },
+  { value: "investment", label: "📈 Portfolio" },
   { value: "freelance", label: "💻 Freelance" },
-  { value: "rental", label: "🏘️ Rental" },
-  { value: "other", label: "📦 Other" },
+  { value: "rental", label: "🏘️ Asset Rental" },
+  { value: "other", label: "📦 Package Box" },
 ]
 
 const COLOR_OPTIONS = [
@@ -196,80 +191,62 @@ export default function CategoriesPage() {
   }
 
   if (loading) {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <Skeleton className="h-8 w-40" />
-            <Skeleton className="mt-2 h-4 w-52" />
-          </div>
-          <Skeleton className="h-9 w-36" />
-        </div>
-        <Skeleton className="h-10 w-72" />
-        <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4">
-          {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} className="h-28 w-full" />
-          ))}
-        </div>
-      </div>
-    )
+    return <CategoriesSkeleton />
   }
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-center">
-        <AlertTriangle className="mb-4 h-12 w-12 text-red-400" />
-        <h2 className="text-xl font-semibold text-foreground">Failed to load categories</h2>
-        <p className="mt-2 text-sm text-muted-foreground">{error}</p>
-        <Button className="mt-6" onClick={fetchCategories}>
-          Try again
+      <div className="flex flex-col items-center justify-center py-24 text-center">
+        <AlertTriangle className="mb-4 h-12 w-12 text-red-500 animate-bounce" />
+        <h2 className="text-xl font-bold text-foreground">Sync Error</h2>
+        <p className="mt-2 text-sm text-muted-foreground max-w-sm">{error}</p>
+        <Button className="mt-6 px-5 py-2.5 rounded-xl font-semibold" onClick={fetchCategories}>
+          Retry Sync
         </Button>
       </div>
     )
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-3 duration-300">
+      
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">Categories</h1>
-          <p className="text-sm text-muted-foreground">Organize your transactions with categories</p>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">Taxonomy Categories</h1>
+          <p className="text-xs font-medium text-muted-foreground font-medium">Define transaction category parameters, colors, and identifiers</p>
         </div>
       </div>
 
-      {/* Tabs */}
+      {/* Tabs list with floating details */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <div className="flex items-center justify-between">
-          <TabsList>
-            <TabsTrigger value="expense">Expense</TabsTrigger>
-            <TabsTrigger value="income">Income</TabsTrigger>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-3 border-b border-border/25">
+          <TabsList className="bg-secondary/40 border border-border/80 rounded-xl p-1 h-10">
+            <TabsTrigger value="expense" className="rounded-lg text-xs font-bold px-5 h-8">Outbound (Expense)</TabsTrigger>
+            <TabsTrigger value="income" className="rounded-lg text-xs font-bold px-5 h-8">Inbound (Income)</TabsTrigger>
           </TabsList>
           <Button
-            onClick={() =>
-              openAddDialog(activeTab === "expense" ? "EXPENSE" : "INCOME")
-            }
+            onClick={() => openAddDialog(activeTab === "expense" ? "EXPENSE" : "INCOME")}
+            className="rounded-xl px-4 py-2.5 bg-primary text-primary-foreground font-semibold hover:-translate-y-0.5 shadow-md shadow-primary/20 hover:shadow-primary/35 flex items-center gap-1.5 transition-all duration-200"
           >
-            <Plus className="mr-1.5 h-4 w-4" />
-            Add {activeTab === "expense" ? "Expense" : "Income"} Category
+            <Plus className="h-4 w-4" />
+            Add {activeTab === "expense" ? "Outbound" : "Inbound"} Category
           </Button>
         </div>
 
-        <TabsContent value="expense" className="mt-4">
+        <TabsContent value="expense" className="mt-6 focus:outline-none">
           {expenseCategories.length === 0 ? (
-            <div className="flex flex-col items-center py-16 text-center">
-              <Tag className="mb-3 h-12 w-12 text-muted-foreground" />
-              <h3 className="text-lg font-medium text-foreground">No expense categories</h3>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Create categories to track your spending.
-              </p>
-              <Button className="mt-4" onClick={() => openAddDialog("EXPENSE")}>
+            <div className="flex flex-col items-center py-20 text-center">
+              <Tag className="mb-4 h-12 w-12 text-muted-foreground animate-pulse" />
+              <h3 className="text-sm font-bold text-foreground">No outbound categories</h3>
+              <p className="text-xs text-muted-foreground mt-1 max-w-sm">Establish spending category parameters to segment transaction logs.</p>
+              <Button className="mt-6 rounded-xl font-semibold" onClick={() => openAddDialog("EXPENSE")}>
                 <Plus className="mr-1.5 h-4 w-4" />
                 Add Category
               </Button>
             </div>
           ) : (
-            <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
               {expenseCategories.map((cat) => (
                 <CategoryCard
                   key={cat.id}
@@ -282,21 +259,19 @@ export default function CategoriesPage() {
           )}
         </TabsContent>
 
-        <TabsContent value="income" className="mt-4">
+        <TabsContent value="income" className="mt-6 focus:outline-none">
           {incomeCategories.length === 0 ? (
-            <div className="flex flex-col items-center py-16 text-center">
-              <Tag className="mb-3 h-12 w-12 text-muted-foreground" />
-              <h3 className="text-lg font-medium text-foreground">No income categories</h3>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Create categories to track your income.
-              </p>
-              <Button className="mt-4" onClick={() => openAddDialog("INCOME")}>
+            <div className="flex flex-col items-center py-20 text-center">
+              <Tag className="mb-4 h-12 w-12 text-muted-foreground animate-pulse" />
+              <h3 className="text-sm font-bold text-foreground">No inbound categories</h3>
+              <p className="text-xs text-muted-foreground mt-1 max-w-sm">Establish inbound categories to segment incoming salary or investment assets.</p>
+              <Button className="mt-6 rounded-xl font-semibold" onClick={() => openAddDialog("INCOME")}>
                 <Plus className="mr-1.5 h-4 w-4" />
                 Add Category
               </Button>
             </div>
           ) : (
-            <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
               {incomeCategories.map((cat) => (
                 <CategoryCard
                   key={cat.id}
@@ -312,56 +287,57 @@ export default function CategoriesPage() {
 
       {/* Add/Edit Category Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md border border-border bg-popover text-foreground rounded-2xl shadow-premium-4 p-6 overflow-hidden">
           <DialogHeader>
-            <DialogTitle>{editingId ? "Edit Category" : "Add Category"}</DialogTitle>
-            <DialogDescription>
-              {editingId ? "Update the category details." : "Create a new category for your transactions."}
+            <DialogTitle className="text-sm font-bold tracking-tight uppercase tracking-widest flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-primary animate-pulse" />
+              {editingId ? "Modify Category parameters" : "Establish Category Taxonomy"}
+            </DialogTitle>
+            <DialogDescription className="text-[10px] font-medium text-muted-foreground mt-1">
+              {editingId ? "Update selected taxonomy parameters." : "Define category visual parameters and identifiers."}
             </DialogDescription>
           </DialogHeader>
 
-          <div className="grid gap-4 py-2">
+          <div className="grid gap-4 py-4 text-xs font-semibold">
             {/* Name */}
-            <div>
-              <Label htmlFor="catName">Category Name</Label>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="catName" className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider">Category Name</Label>
               <Input
                 id="catName"
-                placeholder="e.g. Groceries"
+                placeholder="e.g. Health & Wellness"
+                className="bg-secondary/40 border-border/80 rounded-xl h-10 px-3"
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
               />
             </div>
 
             {/* Type */}
-            <div>
-              <Label>Type</Label>
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider">Ledger Vector type</Label>
               <Select
                 value={form.type}
                 onValueChange={(v) => {
                   if (v === "INCOME" || v === "EXPENSE") setForm({ ...form, type: v })
                 }}
               >
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="w-full h-10 rounded-xl bg-secondary/40 border-border/80 text-xs">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="EXPENSE">Expense</SelectItem>
-                  <SelectItem value="INCOME">Income</SelectItem>
+                <SelectContent className="border-border bg-popover">
+                  <SelectItem value="EXPENSE">Outbound (Expense)</SelectItem>
+                  <SelectItem value="INCOME">Inbound (Income)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             {/* Icon */}
-            <div>
-              <Label>Icon</Label>
-              <Select value={form.icon}                onValueChange={(v) => {
-                  const val = v as string
-                  setForm({ ...form, icon: val })
-                }}>
-                <SelectTrigger className="w-full">
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider">Icon Identifier</Label>
+              <Select value={form.icon} onValueChange={(v) => setForm({ ...form, icon: v || "tag" })}>
+                <SelectTrigger className="w-full h-10 rounded-xl bg-secondary/40 border-border/80 text-xs">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="border-border bg-popover">
                   {ICON_OPTIONS.map((opt) => (
                     <SelectItem key={opt.value} value={opt.value}>
                       {opt.label}
@@ -372,16 +348,16 @@ export default function CategoriesPage() {
             </div>
 
             {/* Color */}
-            <div>
-              <Label>Color</Label>
-              <div className="flex flex-wrap gap-2">
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider">Visual Aesthetic Glow Accent</Label>
+              <div className="flex flex-wrap gap-2 pt-1.5">
                 {COLOR_OPTIONS.map((color) => (
                   <button
                     key={color}
                     type="button"
                     onClick={() => setForm({ ...form, color })}
-                    className={`h-8 w-8 rounded-lg ring-2 ring-offset-2 ring-offset-background transition-all hover:scale-110 ${
-                      form.color === color ? "ring-foreground scale-110" : "ring-transparent"
+                    className={`h-7 w-7 rounded-lg ring-2 ring-offset-2 ring-offset-background transition-all hover:scale-110 ${
+                      form.color === color ? "ring-foreground scale-110 shadow" : "ring-transparent"
                     }`}
                     style={{ backgroundColor: color }}
                   />
@@ -390,13 +366,17 @@ export default function CategoriesPage() {
             </div>
           </div>
 
-          <DialogFooter>
-            <DialogClose render={<Button variant="outline" />}>
+          <DialogFooter className="gap-2.5">
+            <DialogClose render={<Button variant="outline" className="rounded-xl font-bold h-10" />}>
               Cancel
             </DialogClose>
-            <Button onClick={handleSubmit} disabled={submitting}>
+            <Button
+              onClick={handleSubmit}
+              disabled={submitting}
+              className="bg-primary text-primary-foreground font-semibold hover:-translate-y-0.5 rounded-xl h-10 px-5 transition-all shadow-md shadow-primary/20"
+            >
               {submitting && <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />}
-              {editingId ? "Update" : "Create"}
+              {editingId ? "Update Parameters" : "Commit Link"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -415,51 +395,51 @@ function CategoryCard({
   onDelete: () => void
 }) {
   return (
-    <Card
-      className="relative overflow-hidden border-0 bg-card/60 backdrop-blur-sm ring-1 transition-all hover:scale-[1.02]"
-      style={{ "--tw-ring-color": `${category.color}40` } as React.CSSProperties}
+    <GlowCard
+      glowColor={`${category.color}15`}
+      glowSize={250}
+      className="p-5 relative rounded-2xl overflow-hidden flex flex-col justify-between"
+      style={{ borderColor: `${category.color}35` }}
     >
-      {/* Color accent top */}
+      {/* Decorative side accent */}
       <div
-        className="absolute left-0 top-0 h-1 w-full"
+        className="absolute left-0 top-0 h-full w-1"
         style={{ backgroundColor: category.color }}
       />
-      {/* Glow */}
+      {/* Accent Glow */}
       <div
-        className="pointer-events-none absolute -right-6 -top-6 h-20 w-20 rounded-full blur-2xl"
-        style={{ backgroundColor: `${category.color}15` }}
+        className="pointer-events-none absolute -right-6 -top-6 h-20 w-20 rounded-full blur-2xl opacity-20"
+        style={{ backgroundColor: category.color }}
       />
 
-      <CardHeader className="pb-2">
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-3">
-            <div
-              className="flex h-10 w-10 items-center justify-center rounded-xl text-lg"
-              style={{ backgroundColor: `${category.color}20` }}
-            >
-              <span>{getIconEmoji(category.icon)}</span>
-            </div>
-            <div>
-              <CardTitle className="text-sm text-foreground">{category.name}</CardTitle>
-              <CardDescription className="text-xs capitalize">{category.type.toLowerCase()}</CardDescription>
-            </div>
+      <div className="flex items-start justify-between z-10 w-full">
+        <div className="flex items-center gap-3">
+          <div
+            className="flex h-10 w-10 items-center justify-center rounded-xl text-lg border border-border/30 shadow-sm"
+            style={{ backgroundColor: `${category.color}15`, color: category.color }}
+          >
+            {getIconEmoji(category.icon)}
           </div>
-          <div className="flex gap-0.5">
-            <Button variant="ghost" size="icon-xs" onClick={onEdit}>
-              <Pencil className="h-3.5 w-3.5" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon-xs"
-              onClick={onDelete}
-              className="text-red-400 hover:text-red-300"
-            >
-              <Trash2 className="h-3.5 w-3.5" />
-            </Button>
+          <div>
+            <h3 className="text-xs font-bold text-foreground leading-tight">{category.name}</h3>
+            <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider mt-0.5 block">{category.type.toLowerCase()}</span>
           </div>
         </div>
-      </CardHeader>
-    </Card>
+        <div className="flex gap-0.5">
+          <Button variant="ghost" size="icon-xs" onClick={onEdit} className="h-7 w-7 rounded-lg hover:bg-secondary">
+            <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon-xs"
+            onClick={onDelete}
+            className="h-7 w-7 rounded-lg hover:bg-rose-500/10 text-muted-foreground hover:text-rose-500 border border-transparent hover:border-rose-500/20"
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+          </Button>
+        </div>
+      </div>
+    </GlowCard>
   )
 }
 
@@ -485,4 +465,25 @@ function getIconEmoji(icon: string): string {
     other: "📦",
   }
   return map[icon] || "🏷️"
+}
+
+function CategoriesSkeleton() {
+  return (
+    <div className="space-y-8">
+      <div className="flex items-center justify-between">
+        <div>
+          <Skeleton className="h-8 w-40 rounded-xl" />
+          <Skeleton className="mt-2 h-4 w-60 rounded-lg" />
+        </div>
+      </div>
+      <Skeleton className="h-10 w-48 rounded-xl" />
+      <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        {[1, 2, 3, 4].map((i) => (
+          <GlowCard key={i} className="h-20">
+            <Skeleton className="h-5 w-24 rounded-lg" />
+          </GlowCard>
+        ))}
+      </div>
+    </div>
+  )
 }
