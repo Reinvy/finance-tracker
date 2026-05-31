@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import Link from "next/link"
 import { auth } from "@/lib/auth"
 import { redirect } from "next/navigation"
@@ -9,6 +10,12 @@ import {
   ArrowRight,
   Sparkles,
 } from "lucide-react"
+
+export const metadata: Metadata = {
+  title: "Finance Tracker — Take Control of Your Finances",
+  description:
+    "Track expenses, manage budgets, and visualize your financial health with beautiful charts.",
+}
 
 export default async function HomePage() {
   const session = await auth()
