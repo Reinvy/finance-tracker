@@ -289,14 +289,14 @@ export default function TransactionsPage() {
       </div>
 
       {/* Control Panel Filter bar */}
-      <GlowCard className="p-5" glowSize={300}>
+      <GlowCard className="p-5 w-full max-w-full" glowSize={300}>
         <div className="flex items-center gap-2 pb-3 mb-4 border-b border-border/20 text-muted-foreground">
           <SlidersHorizontal className="h-4 w-4" />
           <span className="text-[10px] font-bold uppercase tracking-widest text-foreground">Advanced Query Filters</span>
         </div>
-        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 items-end">
+        <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 items-end">
           
-          <div className="sm:col-span-2">
+          <div className="col-span-1 sm:col-span-2">
             <Label className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Search</Label>
             <div className="relative">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
@@ -309,7 +309,7 @@ export default function TransactionsPage() {
             </div>
           </div>
 
-          <div>
+          <div className="col-span-1">
             <Label className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Type</Label>
             <Select
               value={typeFilter}
@@ -326,7 +326,7 @@ export default function TransactionsPage() {
             </Select>
           </div>
 
-          <div>
+          <div className="col-span-1">
             <Label className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Category</Label>
             <Select
               value={categoryFilter}
@@ -346,7 +346,7 @@ export default function TransactionsPage() {
             </Select>
           </div>
 
-          <div>
+          <div className="col-span-1">
             <Label className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Vault Wallet</Label>
             <Select
               value={walletFilter}
@@ -366,20 +366,37 @@ export default function TransactionsPage() {
             </Select>
           </div>
 
-          <div className="flex gap-2">
-            <Popover>
-              <PopoverTrigger render={<Button variant="outline" className="text-xs h-9 w-full justify-start font-medium bg-secondary/40 rounded-xl" />}>
-                <CalendarIcon className="mr-1.5 h-3.5 w-3.5 text-muted-foreground" />
-                {dateFrom ? formatDate(dateFrom) : "From"}
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0 border-border shadow-premium-4 bg-popover">
-                <Calendar
-                  mode="single"
-                  selected={dateFrom}
-                  onSelect={(d) => { setDateFrom(d); setPage(1) }}
-                />
-              </PopoverContent>
-            </Popover>
+          <div className="col-span-1 sm:col-span-2 md:col-span-1">
+            <Label className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Date Range</Label>
+            <div className="flex gap-2">
+              <Popover>
+                <PopoverTrigger render={<Button variant="outline" className="text-xs h-9 w-[calc(50%-4px)] justify-start font-medium bg-secondary/40 rounded-xl px-2 border-border/80" />}>
+                  <CalendarIcon className="mr-1 h-3 w-3 text-muted-foreground shrink-0" />
+                  <span className="truncate">{dateFrom ? formatDate(dateFrom) : "From"}</span>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0 border-border shadow-premium-4 bg-popover">
+                  <Calendar
+                    mode="single"
+                    selected={dateFrom}
+                    onSelect={(d) => { setDateFrom(d); setPage(1) }}
+                  />
+                </PopoverContent>
+              </Popover>
+
+              <Popover>
+                <PopoverTrigger render={<Button variant="outline" className="text-xs h-9 w-[calc(50%-4px)] justify-start font-medium bg-secondary/40 rounded-xl px-2 border-border/80" />}>
+                  <CalendarIcon className="mr-1 h-3 w-3 text-muted-foreground shrink-0" />
+                  <span className="truncate">{dateTo ? formatDate(dateTo) : "To"}</span>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0 border-border shadow-premium-4 bg-popover">
+                  <Calendar
+                    mode="single"
+                    selected={dateTo}
+                    onSelect={(d) => { setDateTo(d); setPage(1) }}
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
           </div>
 
         </div>
@@ -400,7 +417,7 @@ export default function TransactionsPage() {
       </GlowCard>
 
       {/* Airtable-like Operations Table */}
-      <GlowCard className="p-0 overflow-hidden">
+      <GlowCard className="p-0 overflow-hidden w-full max-w-full">
         {loading ? (
           <div className="space-y-3 p-6">
             {[1, 2, 3, 4, 5].map((i) => (
@@ -427,8 +444,8 @@ export default function TransactionsPage() {
           </div>
         ) : (
           <>
-            <div className="overflow-x-auto">
-              <Table className="text-xs">
+            <div className="w-full">
+              <Table className="text-xs min-w-[600px] sm:min-w-full">
                 <TableHeader className="bg-secondary/40 border-b border-border/40">
                   <TableRow className="hover:bg-transparent">
                     <TableHead className="font-bold uppercase tracking-wider text-muted-foreground py-3.5 px-6">Description</TableHead>
@@ -506,8 +523,8 @@ export default function TransactionsPage() {
 
             {/* Pagination Controls */}
             {data.pagination.totalPages > 1 && (
-              <div className="flex items-center justify-between border-t border-border/30 px-6 py-4 bg-secondary/10">
-                <p className="text-[10px] font-semibold text-muted-foreground">
+              <div className="flex flex-col sm:flex-row items-center justify-between border-t border-border/30 px-4 md:px-6 py-4 bg-secondary/10 gap-3 sm:gap-0">
+                <p className="text-[10px] font-semibold text-muted-foreground text-center sm:text-left">
                   Showing {(data.pagination.page - 1) * data.pagination.limit + 1}–
                   {Math.min(data.pagination.page * data.pagination.limit, data.pagination.total)} of{" "}
                   {data.pagination.total} entries
@@ -522,21 +539,31 @@ export default function TransactionsPage() {
                   >
                     <ChevronLeft className="h-4 w-4" />
                   </Button>
-                  {Array.from({ length: data.pagination.totalPages }, (_, i) => i + 1).map(
-                    (p) => (
-                      <Button
-                        key={p}
-                        variant={p === page ? "default" : "outline"}
-                        size="icon-sm"
-                        onClick={() => setPage(p)}
-                        className={`h-8 w-8 rounded-lg font-bold text-xs ${
-                          p === page ? "bg-primary text-primary-foreground shadow" : "bg-background"
-                        }`}
-                      >
-                        {p}
-                      </Button>
-                    )
-                  )}
+                  
+                  {/* Page Numbers (Desktop Only) */}
+                  <div className="hidden sm:flex items-center gap-1.5">
+                    {Array.from({ length: data.pagination.totalPages }, (_, i) => i + 1).map(
+                      (p) => (
+                        <Button
+                          key={p}
+                          variant={p === page ? "default" : "outline"}
+                          size="icon-sm"
+                          onClick={() => setPage(p)}
+                          className={`h-8 w-8 rounded-lg font-bold text-xs ${
+                            p === page ? "bg-primary text-primary-foreground shadow" : "bg-background"
+                          }`}
+                        >
+                          {p}
+                        </Button>
+                      )
+                    )}
+                  </div>
+
+                  {/* Mobile Page indicator text */}
+                  <span className="sm:hidden text-[10px] font-bold text-foreground px-2 uppercase tracking-wider">
+                    Page {page} of {data.pagination.totalPages}
+                  </span>
+
                   <Button
                     variant="outline"
                     size="icon-sm"
@@ -555,7 +582,7 @@ export default function TransactionsPage() {
 
       {/* dialog styled premium */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="sm:max-w-md border border-border bg-popover text-foreground rounded-2xl shadow-premium-4 p-6 overflow-hidden">
+        <DialogContent className="sm:max-w-md border border-border bg-popover text-foreground rounded-2xl shadow-premium-4 p-4 md:p-6 overflow-hidden">
           <DialogHeader>
             <DialogTitle className="text-sm font-bold tracking-tight text-foreground uppercase tracking-widest flex items-center gap-2">
               <Sparkles className="h-4 w-4 text-primary animate-pulse" />
@@ -565,7 +592,7 @@ export default function TransactionsPage() {
               {editingId ? "Update existing financial ledger parameters." : "Define inbound/outbound financial ledger details."}
             </DialogDescription>
           </DialogHeader>
-
+ 
           <div className="grid gap-4 py-4 text-xs font-semibold">
             {/* Flow Type selector */}
             <div className="grid grid-cols-2 gap-2.5">
@@ -578,7 +605,7 @@ export default function TransactionsPage() {
                 }`}
               >
                 <TrendingDown className="mr-1.5 h-4 w-4" />
-                Outbound (Expense)
+                Outbound
               </Button>
               <Button
                 type="button"
@@ -589,7 +616,7 @@ export default function TransactionsPage() {
                 }`}
               >
                 <TrendingUp className="mr-1.5 h-4 w-4" />
-                Inbound (Income)
+                Inbound
               </Button>
             </div>
 

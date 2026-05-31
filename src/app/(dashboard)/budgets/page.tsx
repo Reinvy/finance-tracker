@@ -378,7 +378,7 @@ export default function BudgetsPage() {
 
       {/* Add/Edit Budget Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="sm:max-w-md border border-border bg-popover text-foreground rounded-2xl shadow-premium-4 p-6 overflow-hidden">
+        <DialogContent className="sm:max-w-md border border-border bg-popover text-foreground rounded-2xl shadow-premium-4 p-4 md:p-6 overflow-hidden">
           <DialogHeader>
             <DialogTitle className="text-sm font-bold tracking-tight uppercase tracking-widest flex items-center gap-2">
               <Sparkles className="h-4 w-4 text-primary animate-pulse" />
