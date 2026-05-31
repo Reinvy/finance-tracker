@@ -65,8 +65,9 @@ export function DashboardShell({ user, children }: DashboardShellProps) {
 
         {/* Page Content Viewport */}
         <main className="relative flex-1 overflow-y-auto overflow-x-hidden px-4 md:px-6 py-6 md:py-8">
-          {/* Subtle glowing radial background overlay */}
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent pointer-events-none" />
+          {/* Subtle glowing radial background overlay: Amethyst top-right, Rose bottom-left */}
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/8 via-transparent to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-pink-500/3 via-transparent to-transparent pointer-events-none" />
           
           {/* Centered maximum width container */}
           <div className="relative z-10 mx-auto max-w-[1600px] w-full animate-in fade-in slide-in-from-bottom-2 duration-300">

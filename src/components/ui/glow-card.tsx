@@ -11,7 +11,7 @@ interface GlowCardProps extends React.ComponentProps<"div"> {
 export function GlowCard({
   className,
   children,
-  glowColor = "rgba(99, 102, 241, 0.12)",
+  glowColor = "rgba(139, 92, 246, 0.15)",
   glowSize = 350,
   ...props
 }: GlowCardProps) {
@@ -50,8 +50,8 @@ export function GlowCard({
         />
       )}
 
-      {/* Decorative top lighting highlight in Dark Mode */}
-      <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-primary/10 to-transparent pointer-events-none opacity-0 group-hover/glow-card:opacity-100 transition-opacity duration-500" />
+      {/* Decorative top lighting highlight with premium Amethyst to Rose blend */}
+      <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-primary/25 via-pink-500/15 to-transparent pointer-events-none opacity-0 group-hover/glow-card:opacity-100 transition-opacity duration-500" />
 
       {/* Card Content Wrapper */}
       <div className="relative z-10 flex flex-col flex-1 gap-2">

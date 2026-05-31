@@ -94,7 +94,7 @@ export default function DashboardPage() {
         <div className="flex items-center gap-3">
           <Button
             onClick={() => router.push("/transactions?action=add-transaction")}
-            className="rounded-xl px-4 py-2.5 bg-primary text-primary-foreground font-semibold hover:-translate-y-0.5 shadow-md shadow-primary/20 hover:shadow-primary/35 flex items-center gap-1.5 transition-all duration-200"
+            className="rounded-xl px-4 py-2.5 bg-gradient-to-r from-primary via-purple-500 to-pink-500 hover:from-primary/90 hover:to-pink-600 text-white font-semibold hover:-translate-y-0.5 shadow-md shadow-primary/20 hover:shadow-primary/35 flex items-center gap-1.5 transition-all duration-200 border-0"
           >
             <Plus className="h-4 w-4" />
             Add Transaction
@@ -103,14 +103,18 @@ export default function DashboardPage() {
       </div>
 
       {/* AI Strategist Recommendation Banner */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-4 rounded-2xl border border-primary/20 bg-primary/5 text-xs text-foreground shadow-sm">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-4 rounded-2xl border border-primary/25 bg-gradient-to-r from-purple-950/25 via-fuchsia-950/10 to-pink-950/10 backdrop-blur-xl shadow-lg shadow-primary/5 relative overflow-hidden group/ai-banner">
+        {/* Pulsing neon highlight */}
+        <div className="absolute right-0 top-0 h-full w-[4px] bg-gradient-to-b from-primary via-purple-500 to-pink-500 opacity-80" />
+        <div className="absolute -right-16 -top-16 w-32 h-32 rounded-full bg-pink-500/5 blur-2xl pointer-events-none group-hover/ai-banner:scale-125 transition-transform duration-700" />
+        
         <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-primary text-white shadow">
-            <Sparkles className="h-4 w-4 text-white" />
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary via-purple-500 to-pink-500 text-white shadow-lg shadow-primary/25 animate-pulse">
+            <Sparkles className="h-4.5 w-4.5 text-white" />
           </div>
           <div>
-            <p className="font-semibold text-primary">Vectra AI Wealth Auditor</p>
-            <p className="text-muted-foreground mt-0.5 font-medium">
+            <p className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-violet-200 via-purple-100 to-pink-200">Vectra AI Wealth Auditor</p>
+            <p className="text-muted-foreground text-[11px] mt-0.5 font-medium leading-relaxed">
               We identified 2 budget sectors nearing warning limits. Cap Food & Dining dining habits to protect your 46% net savings target.
             </p>
           </div>
@@ -119,7 +123,7 @@ export default function DashboardPage() {
           variant="ghost"
           size="sm"
           onClick={() => router.push("/reports")}
-          className="text-xs font-semibold text-primary flex items-center gap-1 hover:bg-primary/10 rounded-lg py-1 px-3"
+          className="text-xs font-bold text-primary hover:text-white flex items-center gap-1 hover:bg-white/5 rounded-xl py-1.5 px-4 transition-all"
         >
           View Full AI Insights <ArrowRight className="h-3.5 w-3.5" />
         </Button>
@@ -129,19 +133,20 @@ export default function DashboardPage() {
       <div className="grid gap-6 md:grid-cols-4">
         
         {/* Total Liquidity */}
-        <GlowCard glowColor="rgba(99, 102, 241, 0.15)" glowSize={250}>
+        <GlowCard glowColor="rgba(139, 92, 246, 0.2)" glowSize={250} className="relative overflow-hidden group/kpi">
+          <div className="absolute top-0 right-0 h-16 w-16 bg-gradient-to-br from-primary/5 to-transparent blur-xl pointer-events-none" />
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Total Liquidity</span>
-            <div className="rounded-xl border border-border/80 bg-secondary/60 p-2 shadow-sm text-muted-foreground">
-              <Wallet className="h-4 w-4" />
+            <div className="rounded-xl border border-primary/10 bg-gradient-to-br from-primary/10 to-purple-500/5 p-2 shadow-sm text-primary group-hover/kpi:scale-105 transition-transform duration-300">
+              <Wallet className="h-4 w-4 text-primary" />
             </div>
           </div>
           <div className="mt-4">
-            <span className="text-2xl font-extrabold text-foreground tracking-tight">
+            <span className="text-2xl font-extrabold text-foreground tracking-tight bg-gradient-to-r from-white to-zinc-300 bg-clip-text text-transparent">
               {formatCurrency(data.totalBalance)}
             </span>
             <div className="flex items-center gap-1 mt-2 text-[10px] text-muted-foreground font-medium">
-              <span className="text-emerald-500 flex items-center">
+              <span className="text-emerald-500 flex items-center font-bold">
                 +4.2%
               </span>
               <span>across all linked vaults</span>
@@ -188,18 +193,19 @@ export default function DashboardPage() {
         </GlowCard>
 
         {/* Net Savings & Savings Rate */}
-        <GlowCard glowColor="rgba(99, 102, 241, 0.15)" glowSize={250}>
+        <GlowCard glowColor="rgba(236, 72, 153, 0.2)" glowSize={250} className="relative overflow-hidden group/kpi">
+          <div className="absolute top-0 right-0 h-16 w-16 bg-gradient-to-br from-pink-500/5 to-transparent blur-xl pointer-events-none" />
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-primary uppercase tracking-wider">Net Savings</span>
-            <div className="rounded-xl border border-border/85 bg-secondary/60 p-2 shadow-sm text-primary">
-              <Percent className="h-4 w-4" />
+            <span className="text-[11px] font-bold text-pink-400 uppercase tracking-wider">Net Savings</span>
+            <div className="rounded-xl border border-pink-500/10 bg-gradient-to-br from-purple-500/10 to-pink-500/5 p-2 shadow-sm text-pink-400 group-hover/kpi:scale-105 transition-transform duration-300">
+              <Percent className="h-4 w-4 text-pink-400" />
             </div>
           </div>
           <div className="mt-4">
-            <span className="text-2xl font-extrabold text-foreground tracking-tight">
+            <span className="text-2xl font-extrabold text-foreground tracking-tight bg-gradient-to-r from-white to-zinc-300 bg-clip-text text-transparent">
               {formatCurrency(netSavings)}
             </span>
-            <div className="flex items-center gap-1 mt-2 text-[10px] font-semibold text-primary">
+            <div className="flex items-center gap-1 mt-2 text-[10px] font-bold text-pink-400">
               <span>{savingsRate.toFixed(1)}% savings rate</span>
             </div>
           </div>
@@ -229,7 +235,7 @@ export default function DashboardPage() {
                     <stop offset="95%" stopColor="#f43f5e" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(99, 102, 241, 0.05)" vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(139, 92, 246, 0.06)" vertical={false} />
                 <XAxis
                   dataKey="month"
                   stroke="currentColor"
@@ -432,11 +438,11 @@ export default function DashboardPage() {
               {data.budgetProgress.map((budget) => {
                 const isOverBudget = budget.percentage > 100
                 const isWarning = budget.percentage >= 80 && budget.percentage <= 100
-                const progressColor = isOverBudget
-                  ? "bg-rose-500"
-                  : isWarning
-                    ? "bg-amber-500"
-                    : "bg-indigo-500"
+                  const progressColor = isOverBudget
+                    ? "bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.35)]"
+                    : isWarning
+                      ? "bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.35)]"
+                      : "bg-gradient-to-r from-primary via-purple-500 to-pink-500 shadow-[0_0_8px_rgba(139,92,246,0.35)]"
 
                 return (
                   <div key={budget.id} className="group/budget">

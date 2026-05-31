@@ -319,7 +319,7 @@ export default function ReportsPage() {
           </div>
         </GlowCard>
 
-        <GlowCard glowColor="rgba(99, 102, 241, 0.12)" glowSize={250}>
+        <GlowCard glowColor="rgba(139, 92, 246, 0.2)" glowSize={250}>
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold text-primary uppercase tracking-wider">Net Balance surplus</span>
             <div className="rounded-xl border border-border/80 bg-secondary/55 p-2 shadow-sm text-primary">
@@ -409,7 +409,7 @@ export default function ReportsPage() {
                     <stop offset="95%" stopColor="#f43f5e" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(99, 102, 241, 0.05)" vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(139, 92, 246, 0.06)" vertical={false} />
                 <XAxis
                   dataKey="month"
                   stroke="currentColor"

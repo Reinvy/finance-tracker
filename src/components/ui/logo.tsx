@@ -20,17 +20,17 @@ export function Logo({ className, showText = false, textSize = "text-sm", ...pro
         {...props}
       >
         <defs>
-          {/* Royal Amethyst & Rose Gradient: Indigo to Violet to Rose */}
+          {/* Royal Amethyst & Rose Gradient: Amethyst to Pinkish-Rose */}
           <linearGradient id="vectra-primary-grad" x1="0%" y1="100%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#6366f1" /> {/* Indigo 500 */}
-            <stop offset="50%" stopColor="#8b5cf6" /> {/* Violet 500 */}
+            <stop offset="0%" stopColor="#7c3aed" /> {/* Amethyst 600 */}
+            <stop offset="50%" stopColor="#a78bfa" /> {/* Amethyst/Violet Light */}
             <stop offset="100%" stopColor="#ec4899" /> {/* Rose 500 */}
           </linearGradient>
 
           {/* Secondary Light Leak/Glow Gradient */}
           <linearGradient id="vectra-accent-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#d946ef" stopOpacity="0.8" /> {/* Fuchsia 500 */}
-            <stop offset="100%" stopColor="#6366f1" stopOpacity="0.1" /> {/* Indigo 500 */}
+            <stop offset="0%" stopColor="#ec4899" stopOpacity="0.8" /> {/* Rose 500 */}
+            <stop offset="100%" stopColor="#7c3aed" stopOpacity="0.1" /> {/* Amethyst 600 */}
           </linearGradient>
 
           {/* High-end Neon Drop Shadow Glow Filter */}

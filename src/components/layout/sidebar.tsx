@@ -200,7 +200,7 @@ export function Sidebar({
                             : "text-muted-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground"
                         )}
                       >
-                        <Icon className={cn("h-5 w-5 transition-transform duration-300", isActive ? "stroke-[2] text-primary animate-pulse-neon-emerald" : "stroke-[1.5]")} />
+                        <Icon className={cn("h-5 w-5 transition-transform duration-300", isActive ? "stroke-[2] text-primary animate-pulse-neon-amethyst" : "stroke-[1.5]")} />
                         {isActive && (
                           <span className="absolute right-0 top-1/2 h-4 w-1 -translate-y-1/2 rounded-l-full bg-primary" />
                         )}
@@ -245,7 +245,7 @@ export function Sidebar({
                             className={cn(
                               "h-4 w-4 shrink-0 transition-all duration-300 group-hover:scale-110", 
                               isActive 
-                                ? "text-primary stroke-[2] animate-pulse-neon-emerald" 
+                                ? "text-primary stroke-[2] animate-pulse-neon-amethyst" 
                                 : "text-muted-foreground group-hover:text-primary stroke-[1.5]"
                             )} 
                           />
@@ -277,7 +277,7 @@ export function Sidebar({
         )}>
           <Avatar className="h-9 w-9 shrink-0 ring-1 ring-border shadow-sm">
             <AvatarImage src={user?.image || ""} alt={user?.name || "User"} />
-            <AvatarFallback className="bg-gradient-to-br from-indigo-500 to-primary text-xs font-bold text-white">
+            <AvatarFallback className="bg-gradient-to-br from-primary to-pink-500 text-xs font-bold text-white">
               {getInitials(user?.name)}
             </AvatarFallback>
           </Avatar>

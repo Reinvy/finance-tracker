@@ -100,10 +100,10 @@ export function Navbar({ user, onOpenCommandPalette, onOpenAI, onToggleSidebar }
         {/* AI Assistant shortcut with neon sparkles animation */}
         <button
           onClick={onOpenAI}
-          className="relative flex h-9 w-9 md:w-auto gap-1.5 items-center justify-center rounded-xl bg-gradient-to-r from-indigo-500 to-indigo-650 text-white font-medium text-[11px] px-0 md:px-3 shadow-md shadow-indigo-500/10 hover:shadow-indigo-500/25 transition-all duration-200 hover:-translate-y-0.5"
+          className="relative flex h-9 w-9 md:w-auto gap-1.5 items-center justify-center rounded-xl bg-gradient-to-r from-primary to-pink-500 text-white font-medium text-[11px] px-0 md:px-3 shadow-md shadow-primary/10 hover:shadow-primary/25 transition-all duration-200 hover:-translate-y-0.5"
           title="AI Assistant"
         >
-          <Sparkles className="h-3.5 w-3.5 text-indigo-200 stroke-[1.5] animate-pulse" />
+          <Sparkles className="h-3.5 w-3.5 text-pink-200 stroke-[1.5] animate-pulse" />
           <span className="hidden md:inline">AI Command</span>
         </button>
 
@@ -134,7 +134,7 @@ export function Navbar({ user, onOpenCommandPalette, onOpenAI, onToggleSidebar }
           >
             <Avatar className="h-7 w-7 ring-1 ring-border">
               <AvatarImage src={user?.image || ""} alt={user?.name || "User"} />
-              <AvatarFallback className="bg-gradient-to-br from-indigo-500 to-primary text-[10px] font-bold text-white">
+              <AvatarFallback className="bg-gradient-to-br from-primary to-pink-500 text-[10px] font-bold text-white">
                 {getInitials(user?.name)}
               </AvatarFallback>
             </Avatar>
@@ -149,7 +149,7 @@ export function Navbar({ user, onOpenCommandPalette, onOpenAI, onToggleSidebar }
               <div className="flex items-center gap-3">
                 <Avatar className="h-8 w-8 ring-1 ring-border">
                   <AvatarImage src={user?.image || ""} alt={user?.name || "User"} />
-                  <AvatarFallback className="bg-gradient-to-br from-indigo-500 to-primary text-[10px] font-bold text-white">
+                  <AvatarFallback className="bg-gradient-to-br from-primary to-pink-500 text-[10px] font-bold text-white">
                     {getInitials(user?.name)}
                   </AvatarFallback>
                 </Avatar>
