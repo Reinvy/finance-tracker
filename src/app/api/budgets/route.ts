@@ -104,12 +104,55 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Category not found" }, { status: 404 })
     }
 
-    // Check if budget already exists for this category
+    // Check if budget already exists for this category in the same period
+    const targetStartDate = startDate ? new Date(startDate) : new Date()
+    const targetPeriod = period || "monthly"
+
+    let dateWhere: Record<string, unknown> = {}
+    if (targetPeriod === "monthly") {
+      const year = targetStartDate.getFullYear()
+      const month = targetStartDate.getMonth()
+      dateWhere = {
+        startDate: {
+          gte: new Date(year, month, 1),
+          lte: new Date(year, month + 1, 0, 23, 59, 59, 999),
+        },
+      }
+    } else if (targetPeriod === "yearly") {
+      const year = targetStartDate.getFullYear()
+      dateWhere = {
+        startDate: {
+          gte: new Date(year, 0, 1),
+          lte: new Date(year, 11, 31, 23, 59, 59, 999),
+        },
+      }
+    } else if (targetPeriod === "weekly") {
+      const startOfWeek = new Date(targetStartDate)
+      startOfWeek.setDate(targetStartDate.getDate() - targetStartDate.getDay())
+      startOfWeek.setHours(0, 0, 0, 0)
+      
+      const endOfWeek = new Date(startOfWeek)
+      endOfWeek.setDate(startOfWeek.getDate() + 6)
+      endOfWeek.setHours(23, 59, 59, 999)
+      
+      dateWhere = {
+        startDate: {
+          gte: startOfWeek,
+          lte: endOfWeek,
+        },
+      }
+    }
+
     const existing = await prisma.budget.findFirst({
-      where: { userId, categoryId },
+      where: {
+        userId,
+        categoryId,
+        period: targetPeriod,
+        ...dateWhere,
+      },
     })
     if (existing) {
-      return NextResponse.json({ error: "Budget already exists for this category" }, { status: 409 })
+      return NextResponse.json({ error: "Budget already exists for this category in this period" }, { status: 409 })
     }
 
     const budget = await prisma.budget.create({

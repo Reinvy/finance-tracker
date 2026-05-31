@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 import {
   Wallet,
   TrendingUp,
@@ -34,6 +35,7 @@ import { formatCurrency, formatDate } from "../../../lib/utils"
 import type { DashboardData } from "../../../types"
 
 export default function DashboardPage() {
+  const router = useRouter()
   const [data, setData] = useState<DashboardData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -82,9 +84,9 @@ export default function DashboardPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground">Dashboard</h1>
-          <p className="text-sm text-muted-foreground">Your financial overview</p>
+          <p className="text-sm text-muted-foreground font-medium">Your financial overview</p>
         </div>
-        <Button>
+        <Button onClick={() => router.push("/transactions?action=add-transaction")}>
           <Plus className="mr-1.5 h-4 w-4" />
           Add Transaction
         </Button>
@@ -93,51 +95,51 @@ export default function DashboardPage() {
       {/* Summary Cards */}
       <div className="grid gap-4 md:grid-cols-3">
         {/* Total Balance */}
-        <Card className="relative overflow-hidden border-0 bg-gradient-to-br from-indigo-600/20 via-indigo-500/10 to-transparent ring-1 ring-indigo-500/30">
-          <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-indigo-500/20 blur-2xl" />
+        <Card className="relative overflow-hidden border-zinc-800 bg-zinc-950/40 backdrop-blur-md shadow-xl shadow-black ring-1 ring-zinc-800/40">
+          <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-zinc-400/5 blur-2xl" />
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-indigo-200">Total Balance</CardTitle>
-            <div className="rounded-lg bg-indigo-500/20 p-2">
-              <Wallet className="h-4 w-4 text-indigo-400" />
+            <CardTitle className="text-sm font-semibold text-zinc-400">Total Balance</CardTitle>
+            <div className="rounded-lg bg-zinc-900/60 border border-zinc-800/80 p-2">
+              <Wallet className="h-4 w-4 text-zinc-300" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-indigo-50">{formatCurrency(data.totalBalance)}</div>
-            <p className="mt-1 text-xs text-indigo-300/70">Across all wallets</p>
+            <div className="text-2xl font-bold text-white">{formatCurrency(data.totalBalance)}</div>
+            <p className="mt-1 text-xs text-zinc-500 font-medium">Across all wallets</p>
           </CardContent>
         </Card>
 
         {/* Monthly Income */}
-        <Card className="relative overflow-hidden border-0 bg-gradient-to-br from-emerald-600/20 via-emerald-500/10 to-transparent ring-1 ring-emerald-500/30">
-          <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-emerald-500/20 blur-2xl" />
+        <Card className="relative overflow-hidden border-zinc-800 bg-zinc-950/40 backdrop-blur-md shadow-xl shadow-black ring-1 ring-zinc-800/40">
+          <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-emerald-500/5 blur-2xl" />
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-emerald-200">Monthly Income</CardTitle>
-            <div className="rounded-lg bg-emerald-500/20 p-2">
+            <CardTitle className="text-sm font-semibold text-emerald-400/90">Monthly Income</CardTitle>
+            <div className="rounded-lg bg-emerald-950/30 border border-emerald-900/30 p-2">
               <TrendingUp className="h-4 w-4 text-emerald-400" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-emerald-50">{formatCurrency(data.monthlyIncome)}</div>
-            <p className="mt-1 flex items-center gap-1 text-xs text-emerald-300/70">
-              <ArrowUpRight className="h-3 w-3" />
+            <div className="text-2xl font-bold text-emerald-400">{formatCurrency(data.monthlyIncome)}</div>
+            <p className="mt-1 flex items-center gap-1 text-xs text-zinc-500 font-medium">
+              <ArrowUpRight className="h-3 w-3 text-emerald-500" />
               Current month
             </p>
           </CardContent>
         </Card>
 
         {/* Monthly Expense */}
-        <Card className="relative overflow-hidden border-0 bg-gradient-to-br from-rose-600/20 via-rose-500/10 to-transparent ring-1 ring-rose-500/30">
-          <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-rose-500/20 blur-2xl" />
+        <Card className="relative overflow-hidden border-zinc-800 bg-zinc-950/40 backdrop-blur-md shadow-xl shadow-black ring-1 ring-zinc-800/40">
+          <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-rose-500/5 blur-2xl" />
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-rose-200">Monthly Expense</CardTitle>
-            <div className="rounded-lg bg-rose-500/20 p-2">
+            <CardTitle className="text-sm font-semibold text-rose-400/90">Monthly Expense</CardTitle>
+            <div className="rounded-lg bg-rose-950/30 border border-rose-900/30 p-2">
               <TrendingDown className="h-4 w-4 text-rose-400" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-rose-50">{formatCurrency(data.monthlyExpense)}</div>
-            <p className="mt-1 flex items-center gap-1 text-xs text-rose-300/70">
-              <ArrowDownRight className="h-3 w-3" />
+            <div className="text-2xl font-bold text-rose-400">{formatCurrency(data.monthlyExpense)}</div>
+            <p className="mt-1 flex items-center gap-1 text-xs text-zinc-500 font-medium">
+              <ArrowDownRight className="h-3 w-3 text-rose-500" />
               Current month
             </p>
           </CardContent>
@@ -256,7 +258,7 @@ export default function DashboardPage() {
               <CardTitle>Recent Transactions</CardTitle>
               <CardDescription>Last 5 transactions</CardDescription>
             </div>
-            <Button variant="ghost" size="sm" render={<a href="/dashboard/transactions" />}>
+            <Button variant="ghost" size="sm" render={<a href="/transactions" />}>
               View all
             </Button>
           </CardHeader>
@@ -319,7 +321,7 @@ export default function DashboardPage() {
               <CardTitle>Budget Progress</CardTitle>
               <CardDescription>Monthly budget tracking</CardDescription>
             </div>
-            <Button variant="ghost" size="sm" render={<a href="/dashboard/budgets" />}>
+            <Button variant="ghost" size="sm" render={<a href="/budgets" />}>
               Manage
             </Button>
           </CardHeader>

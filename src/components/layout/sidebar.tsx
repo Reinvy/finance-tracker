@@ -52,17 +52,17 @@ export function Sidebar({ user }: SidebarProps) {
   }
 
   return (
-    <aside className="fixed left-0 top-0 z-40 flex h-full w-64 flex-col border-r border-white/[0.06] bg-gradient-to-b from-[#0c0922]/95 via-[#110b28]/90 to-[#0c0922]/95 backdrop-blur-2xl">
+    <aside className="fixed left-0 top-0 z-40 flex h-full w-64 flex-col border-r border-zinc-900 bg-black backdrop-blur-2xl">
       {/* Logo / Branding */}
-      <div className="flex h-16 shrink-0 items-center gap-3 border-b border-white/[0.05] px-5">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg shadow-indigo-500/20 ring-1 ring-white/10">
-          <span className="text-sm font-extrabold tracking-tight text-white">F</span>
+      <div className="flex h-16 shrink-0 items-center gap-3 border-b border-zinc-900 px-5">
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-zinc-100 to-zinc-300 shadow-lg shadow-white/5 ring-1 ring-white/10">
+          <span className="text-sm font-extrabold tracking-tight text-zinc-950">F</span>
         </div>
         <div className="flex flex-col">
-          <span className="text-base font-bold leading-tight tracking-tight bg-gradient-to-r from-indigo-200 via-purple-200 to-indigo-100 bg-clip-text text-transparent">
+          <span className="text-base font-bold leading-tight tracking-tight bg-gradient-to-r from-zinc-100 via-zinc-200 to-zinc-350 bg-clip-text text-transparent">
             FinanceTracker
           </span>
-          <span className="text-[10px] font-medium tracking-wider text-indigo-400/50 uppercase">
+          <span className="text-[10px] font-semibold tracking-wider text-zinc-600 uppercase">
             Personal Finance
           </span>
         </div>
@@ -85,27 +85,27 @@ export function Sidebar({ user }: SidebarProps) {
                 className={cn(
                   "group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200",
                   isActive
-                    ? "bg-gradient-to-r from-indigo-500/15 to-purple-500/10 text-indigo-100 shadow-sm shadow-indigo-500/5 border border-indigo-500/20"
-                    : "text-indigo-200/50 hover:bg-white/[0.05] hover:text-indigo-200/80 border border-transparent"
+                    ? "bg-zinc-900/60 text-zinc-100 shadow-md shadow-black border border-zinc-800/80"
+                    : "text-zinc-500 hover:bg-zinc-900/30 hover:text-zinc-250 border border-transparent"
                 )}
               >
                 {/* Active indicator bar */}
                 {isActive && (
-                  <div className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-full bg-gradient-to-b from-indigo-400 to-purple-500 shadow-sm shadow-indigo-400/30" />
+                  <div className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-full bg-zinc-200 shadow-sm shadow-zinc-200/30" />
                 )}
 
                 <Icon
                   className={cn(
                     "h-4 w-4 shrink-0 transition-all duration-200",
                     isActive
-                      ? "text-indigo-400"
-                      : "text-indigo-300/40 group-hover:text-indigo-300/70"
+                      ? "text-zinc-200"
+                      : "text-zinc-600 group-hover:text-zinc-400"
                   )}
                 />
                 <span className="flex-1">{link.label}</span>
 
                 {isActive && (
-                  <div className="h-1.5 w-1.5 rounded-full bg-indigo-400 shadow-sm shadow-indigo-400/40" />
+                  <div className="h-1.5 w-1.5 rounded-full bg-zinc-300 shadow-sm shadow-zinc-300/40" />
                 )}
               </Link>
             )
@@ -114,30 +114,30 @@ export function Sidebar({ user }: SidebarProps) {
 
         {/* Divider with label */}
         <div className="mt-6 mb-3 flex items-center gap-2 px-3">
-          <Separator className="flex-1 bg-white/[0.04]" />
+          <Separator className="flex-1 bg-zinc-900" />
         </div>
       </ScrollArea>
 
       {/* User info footer */}
-      <div className="shrink-0 border-t border-white/[0.05] p-4">
-        <div className="group flex items-center gap-3 rounded-xl bg-white/[0.03] p-2.5 transition-all hover:bg-white/[0.06]">
-          <Avatar className="h-9 w-9 shrink-0 ring-2 ring-indigo-500/15 ring-offset-1 ring-offset-[#0c0922]">
+      <div className="shrink-0 border-t border-zinc-900 p-4">
+        <div className="group flex items-center gap-3 rounded-xl bg-zinc-950/60 border border-zinc-900 p-2.5 transition-all hover:bg-zinc-900/40 hover:border-zinc-800">
+          <Avatar className="h-9 w-9 shrink-0 ring-2 ring-zinc-800 ring-offset-1 ring-offset-black">
             <AvatarImage src={user?.image || ""} alt={user?.name || "User"} />
-            <AvatarFallback className="bg-gradient-to-br from-indigo-500 to-purple-600 text-xs font-semibold text-white">
+            <AvatarFallback className="bg-gradient-to-br from-zinc-100 to-zinc-300 text-xs font-bold text-zinc-950">
               {getInitials(user?.name)}
             </AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
-            <p className="truncate text-sm font-medium text-indigo-100 leading-tight">
+            <p className="truncate text-sm font-semibold text-zinc-200 leading-tight">
               {user?.name || "Guest User"}
             </p>
-            <p className="truncate text-[11px] text-indigo-300/40 leading-tight">
+            <p className="truncate text-[11px] text-zinc-500 leading-tight">
               {user?.email || "Not signed in"}
             </p>
           </div>
           <button
             onClick={() => signOut()}
-            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-indigo-300/30 transition-all hover:bg-red-500/15 hover:text-red-400"
+            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-zinc-650 transition-all hover:bg-red-950/50 hover:text-red-400"
             title="Sign out"
           >
             <LogOut className="h-3.5 w-3.5" />

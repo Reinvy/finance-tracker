@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState, useCallback } from "react"
+import { useSearchParams } from "next/navigation"
 import {
   Plus,
   Search,
@@ -111,6 +112,7 @@ const emptyForm: TransactionForm = {
 }
 
 export default function TransactionsPage() {
+  const searchParams = useSearchParams()
   const [data, setData] = useState<TransactionWithPagination | null>(null)
   const [categories, setCategories] = useState<Category[]>([])
   const [wallets, setWallets] = useState<Wallet[]>([])
@@ -173,6 +175,14 @@ export default function TransactionsPage() {
     fetchTransactions()
     fetchMeta()
   }, [fetchTransactions, fetchMeta])
+
+  useEffect(() => {
+    if (searchParams.get("action") === "add-transaction") {
+      openAddDialog()
+      const newUrl = window.location.pathname
+      window.history.replaceState({}, "", newUrl)
+    }
+  }, [searchParams])
 
   function resetFilters() {
     setSearch("")

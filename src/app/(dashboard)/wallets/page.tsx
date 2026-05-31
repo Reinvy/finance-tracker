@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState, useCallback } from "react"
+import { useSearchParams } from "next/navigation"
 import {
   Plus,
   Wallet,
@@ -88,6 +89,7 @@ const COLOR_OPTIONS = [
 ]
 
 export default function WalletsPage() {
+  const searchParams = useSearchParams()
   const [wallets, setWallets] = useState<WalletData[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -113,6 +115,14 @@ export default function WalletsPage() {
   useEffect(() => {
     fetchWallets()
   }, [fetchWallets])
+
+  useEffect(() => {
+    if (searchParams.get("action") === "add-wallet") {
+      openAddDialog()
+      const newUrl = window.location.pathname
+      window.history.replaceState({}, "", newUrl)
+    }
+  }, [searchParams])
 
   const totalBalance = wallets.reduce((sum, w) => sum + w.balance, 0)
 

@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState, useCallback } from "react"
+import { useSearchParams } from "next/navigation"
 import {
   Plus,
   Pencil,
@@ -80,6 +81,7 @@ const emptyForm: BudgetForm = {
 }
 
 export default function BudgetsPage() {
+  const searchParams = useSearchParams()
   const [budgets, setBudgets] = useState<BudgetData[]>([])
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
@@ -118,6 +120,14 @@ export default function BudgetsPage() {
   useEffect(() => {
     Promise.all([fetchBudgets(), fetchCategories()])
   }, [fetchBudgets, fetchCategories])
+
+  useEffect(() => {
+    if (searchParams.get("action") === "add-budget") {
+      openAddDialog()
+      const newUrl = window.location.pathname
+      window.history.replaceState({}, "", newUrl)
+    }
+  }, [searchParams])
 
   const overBudget = budgets.filter((b) => b.percentage > 100)
   const warningBudget = budgets.filter((b) => b.percentage >= 80 && b.percentage <= 100)
