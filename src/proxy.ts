@@ -15,7 +15,7 @@ const protectedPaths = [
 // Auth pages (redirect to dashboard if already logged in)
 const authPaths = ["/login", "/register"]
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // Check if the current path is a protected route
