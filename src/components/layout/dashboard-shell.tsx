@@ -14,6 +14,7 @@ interface DashboardShellProps {
 
 export function DashboardShell({ user, children }: DashboardShellProps) {
   const [isCollapsed, setIsCollapsed] = React.useState(false)
+  const [isMobileOpen, setIsMobileOpen] = React.useState(false)
   const [isCommandCenterOpen, setIsCommandCenterOpen] = React.useState(false)
   const [isAIDrawerOpen, setIsAIDrawerOpen] = React.useState(false)
 
@@ -36,23 +37,34 @@ export function DashboardShell({ user, children }: DashboardShellProps) {
         user={user}
         isCollapsed={isCollapsed}
         setIsCollapsed={setIsCollapsed}
+        isMobileOpen={isMobileOpen}
+        setIsMobileOpen={setIsMobileOpen}
       />
+
+      {/* Mobile Sidebar Backdrop Overlay */}
+      {isMobileOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-background/60 backdrop-blur-md transition-opacity duration-300 md:hidden"
+          onClick={() => setIsMobileOpen(false)}
+        />
+      )}
 
       {/* Main Content Area */}
       <div
         className={`flex flex-1 flex-col transition-all duration-300 ease-in-out ${
-          isCollapsed ? "pl-20" : "pl-64"
-        }`}
+          isCollapsed ? "md:pl-20" : "md:pl-64"
+        } pl-0`}
       >
         {/* Top Navbar */}
         <Navbar
           user={user}
           onOpenCommandPalette={() => setIsCommandCenterOpen(true)}
           onOpenAI={() => setIsAIDrawerOpen(true)}
+          onToggleSidebar={() => setIsMobileOpen(!isMobileOpen)}
         />
 
         {/* Page Content Viewport */}
-        <main className="relative flex-1 overflow-y-auto px-6 py-8">
+        <main className="relative flex-1 overflow-y-auto px-4 md:px-6 py-6 md:py-8">
           {/* Subtle glowing radial background overlay */}
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent pointer-events-none" />
           

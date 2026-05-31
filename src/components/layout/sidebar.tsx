@@ -20,6 +20,7 @@ import {
   ChevronDown,
   Menu,
   ChevronLeft,
+  X,
 } from "lucide-react"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -35,6 +36,8 @@ interface SidebarProps {
   user: SidebarUser | null
   isCollapsed: boolean
   setIsCollapsed: (collapsed: boolean) => void
+  isMobileOpen?: boolean
+  setIsMobileOpen?: (open: boolean) => void
 }
 
 interface NavigationSection {
@@ -94,7 +97,13 @@ const sections: NavigationSection[] = [
   },
 ]
 
-export function Sidebar({ user, isCollapsed, setIsCollapsed }: SidebarProps) {
+export function Sidebar({
+  user,
+  isCollapsed,
+  setIsCollapsed,
+  isMobileOpen = false,
+  setIsMobileOpen,
+}: SidebarProps) {
   const pathname = usePathname()
   const [openSections, setOpenSections] = React.useState<Record<string, boolean>>({
     Workspace: true,
@@ -123,8 +132,10 @@ export function Sidebar({ user, isCollapsed, setIsCollapsed }: SidebarProps) {
   return (
     <aside
       className={cn(
-        "fixed left-0 top-0 z-40 flex h-full flex-col border-r border-border bg-sidebar text-sidebar-foreground transition-all duration-300 ease-in-out shadow-premium-3",
-        isCollapsed ? "w-20" : "w-64"
+        "fixed left-0 top-0 z-50 flex h-full flex-col border-r border-border bg-sidebar text-sidebar-foreground transition-all duration-300 ease-in-out shadow-premium-3",
+        isMobileOpen ? "translate-x-0" : "-translate-x-full",
+        "md:translate-x-0 md:z-40",
+        isCollapsed ? "md:w-20" : "w-64 md:w-64"
       )}
     >
       {/* Sidebar Header Brand */}
@@ -133,7 +144,7 @@ export function Sidebar({ user, isCollapsed, setIsCollapsed }: SidebarProps) {
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 via-indigo-650 to-primary shadow-md shadow-indigo-500/10">
             <Sparkles className="h-4.5 w-4.5 text-white" />
           </div>
-          {!isCollapsed && (
+          {(!isCollapsed || isMobileOpen) && (
             <div className="flex flex-col">
               <span className="text-sm font-bold leading-tight tracking-tight bg-gradient-to-r from-indigo-550 to-primary bg-clip-text text-transparent">
                 Reinvy Portal
@@ -145,13 +156,23 @@ export function Sidebar({ user, isCollapsed, setIsCollapsed }: SidebarProps) {
           )}
         </div>
 
-        {/* Collapse Button */}
+        {/* Collapse Button (Desktop) */}
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
           className="flex h-8 w-8 items-center justify-center rounded-lg border border-border/80 bg-background text-muted-foreground hover:text-foreground transition-colors hidden md:flex shadow-sm"
         >
           {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
         </button>
+
+        {/* Close Button (Mobile) */}
+        {setIsMobileOpen && (
+          <button
+            onClick={() => setIsMobileOpen(false)}
+            className="flex h-8 w-8 items-center justify-center rounded-lg border border-border/80 bg-background text-muted-foreground hover:text-foreground transition-colors md:hidden shadow-sm"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        )}
       </div>
 
       {/* Navigation List */}
@@ -172,6 +193,7 @@ export function Sidebar({ user, isCollapsed, setIsCollapsed }: SidebarProps) {
                         key={item.href}
                         href={item.href}
                         title={item.label}
+                        onClick={() => setIsMobileOpen?.(false)}
                         className={cn(
                           "relative flex h-11 w-11 items-center justify-center rounded-xl transition-all duration-200",
                           isActive
@@ -212,6 +234,7 @@ export function Sidebar({ user, isCollapsed, setIsCollapsed }: SidebarProps) {
                         <Link
                           key={item.href}
                           href={item.href}
+                          onClick={() => setIsMobileOpen?.(false)}
                           className={cn(
                             "group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium transition-all duration-200 border border-transparent",
                             isActive
