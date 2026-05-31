@@ -28,8 +28,10 @@ export function proxy(request: NextRequest) {
     (path) => pathname === path || pathname.startsWith(path + "/")
   )
 
-  // Check for session cookie (NextAuth.js JWT session token)
+  // Check for session cookie (NextAuth.js JWT session token, including Auth.js v5 names)
   const sessionToken =
+    request.cookies.get("authjs.session-token")?.value ||
+    request.cookies.get("__Secure-authjs.session-token")?.value ||
     request.cookies.get("next-auth.session-token")?.value ||
     request.cookies.get("__Secure-next-auth.session-token")?.value
 
