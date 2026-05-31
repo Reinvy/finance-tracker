@@ -109,7 +109,7 @@ export default function DashboardPage() {
             <Sparkles className="h-4 w-4 text-white" />
           </div>
           <div>
-            <p className="font-semibold text-primary">Reinvy AI Portfolio Auditor</p>
+            <p className="font-semibold text-primary">Vectra AI Wealth Auditor</p>
             <p className="text-muted-foreground mt-0.5 font-medium">
               We identified 2 budget sectors nearing warning limits. Cap Food & Dining dining habits to protect your 46% net savings target.
             </p>

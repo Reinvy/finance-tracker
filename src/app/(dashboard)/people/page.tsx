@@ -23,7 +23,7 @@ interface Teammate {
 }
 
 const mockTeam: Teammate[] = [
-  { id: "1", name: "Reinvy (You)", email: "reinvy@enterprise.com", role: "OWNER", avatar: "R", allowanceUsed: 3420000, allowanceLimit: 10000000, status: "ACTIVE" },
+  { id: "1", name: "Vectra (You)", email: "vectra@enterprise.com", role: "OWNER", avatar: "V", allowanceUsed: 3420000, allowanceLimit: 10000000, status: "ACTIVE" },
   { id: "2", name: "Sophia Martinez", email: "sophia.m@enterprise.com", role: "ADMIN", avatar: "SM", allowanceUsed: 1850000, allowanceLimit: 5000000, status: "ACTIVE" },
   { id: "3", name: "David Chen", email: "d.chen@enterprise.com", role: "EDITOR", avatar: "DC", allowanceUsed: 920000, allowanceLimit: 2500000, status: "ACTIVE" },
   { id: "4", name: "Clara Watson", email: "clara.w@enterprise.com", role: "VIEWER", avatar: "CW", allowanceUsed: 0, allowanceLimit: 500000, status: "PENDING" },
@@ -247,7 +247,7 @@ export default function PeoplePage() {
             <span className="text-muted-foreground text-[10px] shrink-0 w-24">Yesterday, 14:10</span>
             <div className="flex h-2 w-2 rounded-full bg-emerald-500 mt-1.5 shadow" />
             <div>
-              <p className="text-foreground font-bold">Reinvy modified budget envelop allocation</p>
+              <p className="text-foreground font-bold">Vectra modified budget envelop allocation</p>
               <p className="text-[10px] text-muted-foreground mt-0.5">Allocated Food & Dining cap parameter upgraded from 3M to 5M IDR.</p>
             </div>
           </div>

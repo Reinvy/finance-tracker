@@ -23,6 +23,7 @@ import {
   X,
 } from "lucide-react"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { Logo } from "@/components/ui/logo"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { signOut } from "next-auth/react"
 
@@ -141,16 +142,14 @@ export function Sidebar({
       {/* Sidebar Header Brand */}
       <div className="flex h-16 shrink-0 items-center justify-between border-b border-border/80 px-4">
         <div className="flex items-center gap-3 overflow-hidden">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 via-indigo-650 to-primary shadow-md shadow-indigo-500/10">
-            <Sparkles className="h-4.5 w-4.5 text-white" />
-          </div>
+          <Logo className="h-9 w-9 animate-float-slow" />
           {(!isCollapsed || isMobileOpen) && (
             <div className="flex flex-col">
-              <span className="text-sm font-bold leading-tight tracking-tight bg-gradient-to-r from-indigo-550 to-primary bg-clip-text text-transparent">
-                Reinvy Portal
+              <span className="text-sm font-bold leading-tight tracking-tight bg-gradient-to-r from-zinc-100 via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
+                Vectra
               </span>
-              <span className="text-[9px] font-semibold tracking-wider text-muted-foreground uppercase">
-                Enterprise SaaS v2030
+              <span className="text-[9px] font-semibold tracking-widest text-muted-foreground/80 uppercase leading-none mt-0.5">
+                Smart Wealth Suite
               </span>
             </div>
           )}
@@ -195,13 +194,13 @@ export function Sidebar({
                         title={item.label}
                         onClick={() => setIsMobileOpen?.(false)}
                         className={cn(
-                          "relative flex h-11 w-11 items-center justify-center rounded-xl transition-all duration-200",
+                          "relative flex h-11 w-11 items-center justify-center rounded-xl transition-all duration-200 icon-premium-hover",
                           isActive
-                            ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
-                            : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                            ? "bg-primary/10 text-primary border border-primary/20 shadow-premium-1 shadow-primary/5"
+                            : "text-muted-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground"
                         )}
                       >
-                        <Icon className="h-5 w-5" />
+                        <Icon className={cn("h-5 w-5 transition-transform duration-300", isActive ? "stroke-[2] text-primary animate-pulse-neon-emerald" : "stroke-[1.5]")} />
                         {isActive && (
                           <span className="absolute right-0 top-1/2 h-4 w-1 -translate-y-1/2 rounded-l-full bg-primary" />
                         )}
@@ -242,7 +241,14 @@ export function Sidebar({
                               : "text-muted-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground"
                           )}
                         >
-                          <Icon className={cn("h-4 w-4 shrink-0 transition-transform group-hover:scale-105", isActive ? "text-primary" : "text-muted-foreground")} />
+                           <Icon 
+                            className={cn(
+                              "h-4 w-4 shrink-0 transition-all duration-300 group-hover:scale-110", 
+                              isActive 
+                                ? "text-primary stroke-[2] animate-pulse-neon-emerald" 
+                                : "text-muted-foreground group-hover:text-primary stroke-[1.5]"
+                            )} 
+                          />
                           <div className="flex-1 min-w-0">
                             <p className="truncate leading-none">{item.label}</p>
                             <span className="text-[9px] text-muted-foreground/60 group-hover:text-muted-foreground transition-colors hidden xl:inline truncate mt-0.5 max-w-[150px] overflow-hidden leading-tight">

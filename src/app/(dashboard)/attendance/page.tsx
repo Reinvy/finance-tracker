@@ -19,7 +19,7 @@ interface GeoSpend {
 
 const mockLocations: GeoSpend[] = [
   { id: "1", collaborator: "Sophia Martinez", location: "Starbucks Cyber Park", coordinates: "-6.2088, 106.8456", amount: "IDR 125,000", category: "Food & Dining", timestamp: "10 mins ago", status: "AUTHORIZED" },
-  { id: "2", collaborator: "Reinvy (You)", location: "Neon Plaza Mall", coordinates: "-6.1751, 106.8272", amount: "IDR 3,420,000", category: "Utilities", timestamp: "1 hour ago", status: "AUTHORIZED" },
+  { id: "2", collaborator: "Vectra (You)", location: "Neon Plaza Mall", coordinates: "-6.1751, 106.8272", amount: "IDR 3,420,000", category: "Utilities", timestamp: "1 hour ago", status: "AUTHORIZED" },
   { id: "3", collaborator: "David Chen", location: "Co-Work Station", coordinates: "-6.2297, 106.8167", amount: "IDR 45,000", category: "Office Supplies", timestamp: "2 hours ago", status: "AUTHORIZED" },
   { id: "4", collaborator: "Sophia Martinez", location: "Graha Gas Station", coordinates: "-6.1950, 106.7900", amount: "IDR 400,000", category: "Transportation", timestamp: "Yesterday", status: "AUDIT_FLAG" },
 ]
@@ -124,7 +124,7 @@ export default function AttendancePage() {
               <div className="absolute -inset-1 rounded-full bg-indigo-500/20 animate-pulse" />
               <MapPin className="h-5 w-5 text-indigo-500 relative z-10 hover:-translate-y-0.5 transition-transform" />
               <div className="absolute left-6 top-0 hidden group-hover/pin:block bg-popover border border-border text-[9px] font-bold p-2 rounded-lg shadow-premium-3 min-w-[120px] z-30">
-                <p className="text-foreground">Reinvy (You)</p>
+                <p className="text-foreground">Vectra (You)</p>
                 <p className="text-muted-foreground mt-0.5">Neon Plaza Mall</p>
                 <p className="text-primary mt-1">3.4M IDR spend</p>
               </div>

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { toast } from "sonner"
+import { Logo } from "@/components/ui/logo"
 import { 
   Wallet, 
   Mail, 
@@ -29,22 +30,22 @@ export default function LoginPage() {
   // Slideshow data for the premium right panel
   const features = [
     {
-      title: "Smart Expense Tracking",
-      description: "Catat pengeluaran dan pemasukan harian Anda secara instan dalam beberapa klik. Kategorikan secara otomatis untuk analisis cepat.",
-      icon: <Wallet className="h-6 w-6 text-emerald-400" />,
-      color: "from-emerald-500/20 to-teal-500/5"
+      title: "Smart Asset Tracking",
+      description: "Catat dan monitor seluruh aset serta transaksi harian Anda secara instan. Kategorisasi otomatis berbasis kecerdasan buatan.",
+      icon: <Wallet className="h-6 w-6 text-indigo-400" />,
+      color: "from-indigo-500/20 to-purple-500/5"
     },
     {
-      title: "Beautiful Financial Analytics",
-      description: "Visualisasikan kondisi keuangan Anda dengan grafik interaktif kontras tinggi. Pahami aliran dana masuk dan keluar Anda seketika.",
-      icon: <PieChart className="h-6 w-6 text-purple-400" />,
-      color: "from-purple-500/20 to-indigo-500/5"
+      title: "Beautiful Portfolio Analytics",
+      description: "Visualisasikan kondisi portofolio Anda dengan grafik interaktif performa tinggi. Pahami pertumbuhan aset Anda seketika.",
+      icon: <PieChart className="h-6 w-6 text-pink-400" />,
+      color: "from-pink-500/20 to-purple-500/5"
     },
     {
-      title: "Smart Budget Planning",
-      description: "Tetapkan limit anggaran bulanan per kategori. Dapatkan notifikasi dan visual tracker saat Anda mendekati batas pengeluaran.",
-      icon: <TrendingUp className="h-6 w-6 text-amber-400" />,
-      color: "from-amber-500/20 to-orange-500/5"
+      title: "Intelligent Wealth Budgets",
+      description: "Tetapkan sasaran dan limit alokasi keuangan bulanan. Dapatkan insight cerdas untuk memaksimalkan akumulasi kekayaan Anda.",
+      icon: <TrendingUp className="h-6 w-6 text-purple-400" />,
+      color: "from-purple-500/20 to-pink-500/5"
     }
   ]
 
@@ -58,7 +59,7 @@ export default function LoginPage() {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setLoading(true)
-
+ 
     const formData = new FormData(e.currentTarget)
     const email = formData.get("email") as string
     const password = formData.get("password") as string
@@ -91,15 +92,13 @@ export default function LoginPage() {
       <section className="col-span-1 lg:col-span-5 flex flex-col justify-between p-6 md:p-12 bg-black relative z-10 border-r border-zinc-900">
         
         {/* Subtle decorative glow */}
-        <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full bg-emerald-500/5 blur-3xl pointer-events-none" />
+        <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full bg-indigo-500/5 blur-3xl pointer-events-none" />
         
         {/* Logo Section */}
         <div className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 shadow-[0_0_15px_rgba(16,185,129,0.3)] ring-1 ring-emerald-400/30">
-            <Wallet className="h-4 w-4 text-zinc-950 stroke-[2.5]" />
-          </div>
+          <Logo className="h-9 w-9 animate-float-slow" />
           <span className="text-xl font-bold tracking-tight bg-gradient-to-r from-zinc-100 via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
-            Finance Tracker
+            Vectra
           </span>
         </div>
 
@@ -110,7 +109,7 @@ export default function LoginPage() {
               Selamat Datang Kembali
             </h1>
             <p className="text-zinc-500 text-sm font-medium leading-relaxed">
-              Masuk untuk memantau, menganalisis, dan merencanakan keuangan Anda secara pintar.
+              Masuk untuk memantau, menganalisis, dan mempercepat pertumbuhan aset Anda.
             </p>
           </div>
 
@@ -121,7 +120,7 @@ export default function LoginPage() {
                 Alamat Email
               </Label>
               <div className="relative group">
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-zinc-600 group-focus-within:text-emerald-400 transition-colors">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-zinc-600 group-focus-within:text-indigo-400 transition-colors">
                   <Mail className="h-4 w-4" />
                 </div>
                 <Input
@@ -130,7 +129,7 @@ export default function LoginPage() {
                   type="email"
                   placeholder="nama@email.com"
                   required
-                  className="pl-10 pr-4 py-2.5 w-full border-zinc-800 bg-zinc-950/50 text-zinc-100 placeholder:text-zinc-700 focus:border-emerald-500/80 focus:ring-4 focus:ring-emerald-500/10 focus:bg-zinc-950 transition-all rounded-xl border"
+                  className="pl-10 pr-4 py-2.5 w-full border-zinc-800 bg-zinc-950/50 text-zinc-100 placeholder:text-zinc-700 focus:border-indigo-500/80 focus:ring-4 focus:ring-indigo-500/10 focus:bg-zinc-950 transition-all rounded-xl border"
                 />
               </div>
             </div>
@@ -143,7 +142,7 @@ export default function LoginPage() {
                 </Label>
               </div>
               <div className="relative group">
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-zinc-600 group-focus-within:text-emerald-400 transition-colors">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-zinc-600 group-focus-within:text-indigo-400 transition-colors">
                   <Lock className="h-4 w-4" />
                 </div>
                 <Input
@@ -152,7 +151,7 @@ export default function LoginPage() {
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
                   required
-                  className="pl-10 pr-10 py-2.5 w-full border-zinc-800 bg-zinc-950/50 text-zinc-100 placeholder:text-zinc-700 focus:border-emerald-500/80 focus:ring-4 focus:ring-emerald-500/10 focus:bg-zinc-950 transition-all rounded-xl border"
+                  className="pl-10 pr-10 py-2.5 w-full border-zinc-800 bg-zinc-950/50 text-zinc-100 placeholder:text-zinc-700 focus:border-indigo-500/80 focus:ring-4 focus:ring-indigo-500/10 focus:bg-zinc-950 transition-all rounded-xl border"
                 />
                 <button
                   type="button"
@@ -168,11 +167,11 @@ export default function LoginPage() {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full relative overflow-hidden group/btn bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-500 hover:from-emerald-300 hover:to-teal-400 text-zinc-950 font-bold shadow-lg shadow-emerald-500/15 active:translate-y-px transition-all py-3 rounded-xl border-0 flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full relative overflow-hidden group/btn bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:opacity-95 hover:scale-[1.01] active:scale-[0.99] text-white font-bold shadow-lg shadow-indigo-500/15 active:translate-y-px transition-all py-3 rounded-xl border-0 flex items-center justify-center gap-2 cursor-pointer"
             >
               {loading ? (
                 <>
-                  <Loader2 className="h-4 w-4 animate-spin text-zinc-950" />
+                  <Loader2 className="h-4 w-4 animate-spin text-white" />
                   <span>Memverifikasi akun...</span>
                 </>
               ) : (
@@ -198,7 +197,7 @@ export default function LoginPage() {
         {/* Clean branding note */}
         <div className="text-center lg:text-left">
           <p className="text-[10px] text-zinc-600">
-            &copy; {new Date().getFullYear()} Finance Tracker. Secure & Encrypted.
+            &copy; {new Date().getFullYear()} Vectra Finance. Secure & Encrypted.
           </p>
         </div>
       </section>
@@ -210,14 +209,14 @@ export default function LoginPage() {
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#09090b_1px,transparent_1px),linear-gradient(to_bottom,#09090b_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none opacity-80" />
         
         {/* Elegant pulsing radial glows */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-emerald-500/5 blur-[120px] animate-pulse duration-10000 pointer-events-none" />
-        <div className="absolute bottom-10 right-10 w-96 h-96 rounded-full bg-teal-500/5 blur-[100px] pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-indigo-500/5 blur-[120px] animate-pulse duration-10000 pointer-events-none" />
+        <div className="absolute bottom-10 right-10 w-96 h-96 rounded-full bg-pink-500/5 blur-[100px] pointer-events-none" />
 
         <div className="max-w-md w-full z-10 space-y-10">
           
           {/* Glassmorphic dashboard mockup preview */}
-          <div className="relative group p-1.5 rounded-2xl bg-zinc-950/40 border border-zinc-800/40 backdrop-blur-xl shadow-2xl shadow-black ring-1 ring-white/5 overflow-hidden transition-all duration-700 hover:border-emerald-500/20">
-            <div className="absolute top-0 right-0 w-48 h-48 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none group-hover:scale-125 transition-transform duration-700" />
+          <div className="relative group p-1.5 rounded-2xl bg-zinc-950/40 border border-zinc-800/40 backdrop-blur-xl shadow-2xl shadow-black ring-1 ring-white/5 overflow-hidden transition-all duration-700 hover:border-indigo-500/20">
+            <div className="absolute top-0 right-0 w-48 h-48 rounded-full bg-indigo-500/10 blur-3xl pointer-events-none group-hover:scale-125 transition-transform duration-700" />
             
             {/* Mockup header */}
             <div className="flex items-center justify-between border-b border-zinc-900 pb-3 px-4 pt-2">
@@ -228,7 +227,7 @@ export default function LoginPage() {
               </div>
               <div className="text-[10px] text-zinc-600 font-mono tracking-wider">FINANCIAL_REPORT.XLS</div>
               <div className="flex items-center gap-1">
-                <ShieldCheck className="h-3.5 w-3.5 text-emerald-500/70" />
+                <ShieldCheck className="h-3.5 w-3.5 text-indigo-500/70" />
                 <span className="text-[9px] text-zinc-500 font-semibold uppercase tracking-wider">Secured</span>
               </div>
             </div>
@@ -240,7 +239,7 @@ export default function LoginPage() {
                   <span className="text-[10px] text-zinc-500 uppercase tracking-widest font-semibold">Total Saldo Aktif</span>
                   <div className="text-2xl font-bold tracking-tight text-white">Rp 48.750.000</div>
                 </div>
-                <span className="text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold flex items-center gap-1">
+                <span className="text-xs px-2.5 py-1 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-bold flex items-center gap-1">
                   <TrendingUp className="h-3 w-3" />
                   +12.4%
                 </span>
@@ -250,10 +249,10 @@ export default function LoginPage() {
               <div className="space-y-1.5 pt-1">
                 <div className="flex justify-between text-[10px]">
                   <span className="text-zinc-400 font-medium">Batas Anggaran Makanan</span>
-                  <span className="text-emerald-400 font-bold">72% Terpakai</span>
+                  <span className="text-pink-400 font-bold">72% Terpakai</span>
                 </div>
                 <div className="h-1.5 w-full bg-zinc-900 rounded-full overflow-hidden p-px">
-                  <div className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full" style={{ width: '72%' }} />
+                  <div className="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-400 rounded-full" style={{ width: '72%' }} />
                 </div>
               </div>
             </div>
@@ -282,7 +281,7 @@ export default function LoginPage() {
                   key={index}
                   onClick={() => setCurrentSlide(index)}
                   className={`h-1.5 rounded-full transition-all duration-300 ${
-                    index === currentSlide ? "w-6 bg-emerald-400" : "w-1.5 bg-zinc-800 hover:bg-zinc-700"
+                    index === currentSlide ? "w-6 bg-indigo-400" : "w-1.5 bg-zinc-800 hover:bg-zinc-700"
                   }`}
                   aria-label={`Go to slide ${index + 1}`}
                 />

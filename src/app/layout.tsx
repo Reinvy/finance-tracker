@@ -15,9 +15,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Finance Tracker — Take Control of Your Finances",
+  title: "Vectra Finance — Smart Wealth Suite",
   description:
-    "Track expenses, manage budgets, and visualize your financial health with beautiful charts.",
+    "Track assets, manage budgets, and accelerate your financial velocity with a beautiful, high-performance dashboard.",
 };
 
 export default function RootLayout({
