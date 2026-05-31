@@ -32,11 +32,11 @@ export default function LoginPage() {
       if (result?.error) {
         toast.error("Email atau password salah")
       } else {
-        router.push("/dashboard")
-        router.refresh()
+        // Full page navigation so middleware re-checks session cookie
+        window.location.href = "/dashboard"
       }
     } catch {
-      toast.error("Terjadi kesalahan")
+      toast.error("Terjadi kesalahan. Silakan coba lagi.")
     } finally {
       setLoading(false)
     }

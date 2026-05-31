@@ -53,11 +53,12 @@ export default function RegisterPage() {
       })
 
       if (result?.ok) {
-        router.push("/dashboard")
-        router.refresh()
+        window.location.href = "/dashboard"
+      } else {
+        toast.error("Gagal login otomatis. Silakan login manual.")
       }
     } catch {
-      toast.error("Terjadi kesalahan")
+      toast.error("Terjadi kesalahan. Silakan coba lagi.")
     } finally {
       setLoading(false)
     }
